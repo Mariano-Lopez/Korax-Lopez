@@ -1,110 +1,147 @@
-// Desafio complementario
+// Entregable N°2 Simulador de reserva de hotel Korax (Se esta evaluando nombre final)
 
-//Pedir 2 numeros, sumarlos entre si, luego pedir otro numero mas para sumarselo al resultado anterior (corta con 0).
+// alert(Bienvenido a Hotel Korax por favor ingrese sus datos para poder registrarlo.)
 
-//Se le pide al usuario que cargue 2 numeros
-/*let num1 = parseInt(prompt("Ingrese un número")) 
-let num2 = parseInt(prompt("Ingrese otro"))
+const datos = []
 
-//Se los suma entre si
-let suma = num1 + num2
+let nombre = prompt("Ingrese su nombre")
+let apellido = prompt("Ingrese su apellido")
 
-//Se muestra el resultado
-console.log(num1 + " + " + num2 + " = " + suma)
+let usuario = nombre + " " + apellido
+datos.push(usuario)
 
-//"Mientras" que num1 no valga 0 el ciclo sigue
-while (num1 !==0){
-    //Pido nuevamente un numero para sumarselo al resultado anterior
-    num1 = parseInt(prompt("Ingrese nuevamente un numero"))
-    //Suma
-    sumaSeguida = suma + num1
-    console.log(suma + " + " + num1 + " = " + sumaSeguida)
-    //Suma va a valer sumaSeguida para que el valor del resultado anterior no se pierda
-    suma = sumaSeguida
+let fechaDeLlegada = prompt("Ingrese fecha de llegada (formato dd/mm/aa)")
+datos.push(fechaDeLlegada)
 
-}*/
+let fechaDeIda = prompt("Ingrese fecha de ida (formato dd/mm/aa)")
+datos.push(fechaDeIda)
 
-//Le pido al usuario que ingrese sus 3 animales favoritos y solo 3 para que el ciclo corte.
+let diasEstadia = parseInt(prompt("Dias de estadia"))
+datos.push(diasEstadia)
 
+let cantPer = parseInt(prompt("Cantidad de personas"))
+datos.push(cantPer)
 
-/*let animal
+const hab1Op1 = ["1 Dormitorio", "Baño", "Cocina", "Living", "Pileta"]
+const hab1Op2 = ["1 Dormitorio", "Baño", "Cocina", "Living", "Balcón"]
 
-console.log("Sus animales favoritos son:")
+const hab2Op1 = ["2 Dormitorios", "Baño", "Cocina", "Living", "Pileta"]
+const hab2Op2 = ["2 Dormitorios", "Baño", "Cocina", "Living", "Balcón"]
 
-for(let i = 1; i < 4; i++){
+const hab3Op1 = ["3 Dormitorios", "Baño", "Cocina", "Living", "Pileta"]
+const hab3Op2 = ["3 Dormitorios", "Baño", "Cocina", "Living", "Balcón"]
+
+const hab4Op1 = ["4 Dormitorios", "Baño", "Cocina", "Living", "Pileta"]
+const hab4Op2 = ["4 Dormitorios", "Baño", "Cocina", "Living", "Balcón"]
+
+let costoPorDia = 2000
+
+let opcion = opcionHab(cantPer)
+
+function opcionHab(cantFam){
     
-    let animal = prompt("Ingrese su animal favorito")
-    console.log("Animal " + i + " = " + animal)
-}*/
-
-
-// Entregable N°1 Calcular promedio final de 3 alumnos ingresados y mostrar por consola si estan Aprobados o no.
-
-//Mensaje al usuario
-alert("Porfavor ingrese los 3 alumnos a clasificar")
-
-//Declaro funcion para que me devuelva el resultado de la regularidad del alumno
-function estadoFinal(calif){
-    if (calif >= 6){
-        estado = "Aprobado"
-    }
-    else{
-        estado = "Desaprobado"
+    if (cantFam == 1){
+        alert("--Opcion 1--" + "\n" + hab1Op1.join("\n") +  "\n" + "--Opcion 2--" + "\n" + hab1Op2.join("\n"))
+        op = prompt("Igrese habitacion que desee")
+        
     }
 
-    return estado
+    if (cantFam == 2){
+        alert("--Opcion 1--" + "\n" + hab2Op1.join("\n") +  "\n" + "--Opcion 2--" + "\n" + hab2Op2.join("\n"))
+        op = prompt("Igrese habitacion que desee")
+    }
+
+    if (cantFam == 3){
+        alert("--Opcion 1--" + "\n" + hab3Op1.join("\n") +  "\n" + "--Opcion 2--" + "\n" + hab3Op2.join("\n"))
+        op = prompt("Igrese habitacion que desee")
+    }
+
+    if (cantFam == 4){
+        alert("--Opcion 1--" + "\n" + hab4Op1.join("\n") +  "\n" + "--Opcion 2--" + "\n" + hab4Op2.join("\n"))
+        op = prompt("Igrese habitacion que desee")
+    }
+    return op
 }
 
-//Funcion para calcular el promedio
-function prom(calif1, calif2, calif3){
-    
-    promedio = (calif1 + calif2 + calif3) / 3
+let servi = servicioHotel(cantPer)
 
-    return promedio
+function servicioHotel(cantFam){
+    servicio = 0
+
+    allInclusive = prompt("¿Desea all inclusive?").toLowerCase()
+
+    if (allInclusive == "si"){
+        servicio = 1000 * cantFam
+    }
+
+    else if (allInclusive == "no"){
+        
+        comida = prompt("¿Desea incluir desayuno, almuerzo y cen?").toLowerCase()
+
+        if (comida == "si"){
+            servicio = 800 * cantFam
+        }
+        
+        tour = prompt("¿Desea incluír tours?").toLowerCase()
+        if (tour == "si"){
+            servicio += 700 * cantFam
+        }
+
+        
+        paseLibre = prompt("¿Desea pase libre eventos del hotel?").toLowerCase()
+        if (paseLibre == "si"){
+            servicio += 600 * cantFam
+        }
+    }
+    return servicio
 }
 
-//Como son unicamente 3 alumnos uso el for
-for (let i = 1; i < 4; i++){
-    
-    let alumno = prompt("Ingrese nombre del alumno")
+let precioHabitacion = precioHab(costoPorDia, diasEstadia, cantPer)
 
-    //Si el usuario ingresa un numero menor a 0 o mayor a 10 entra en un bucle hasta que no ingrese correctamente la nota
-    //Suponemos que las notas son enteras
-    let nota1 = parseInt(prompt("Ingrese nota del alumno"))
-    while (nota1 < 1 || nota1 > 10){
-
-        nota1 = parseInt(prompt("Nota incorrecta ingrese nuevamente"))
-    }
-    let nota2 = parseInt(prompt("Ingrese nota del alumno"))
-    while (nota2 < 1 || nota2 > 10){
-
-        nota2 = parseInt(prompt("Nota incorrecta ingrese nuevamente"))
-    }
-    let nota3 = parseInt(prompt("Ingrese nota del alumno"))
-    while (nota3 < 1 || nota3 > 10){
-
-        nota3 = parseInt(prompt("Nota incorrecta ingrese nuevamente"))
-    }
-
-    //Llamo a las funciones y guardo su retorno en una variable
-    let nota = prom(nota1, nota2, nota3)
-
-    //Llamo a las funciones y guardo su retorno en una variable
-    let regularidad = estadoFinal(nota)
-
-    //Muestro por consola el resultado del programa
-    console.log("Alumno " + alumno + " está " + regularidad + " su promedio es " + nota)
-
+function precioHab(cost, dia, per){
+    precioHabi = cost * dia * per
+    return precioHabi
 }
 
+let precioFinal = servi + precioHabitacion
 
+console.log("Señor/a " + datos[0])
+console.log("Usted ha elegido la siguiente habitación")
 
+if (opcion == 1 && cantPer == 1){
+    console.log(hab1Op1.join(", "))
+}
 
+else if (opcion == 2 && cantPer == 1){
+    console.log(hab1Op2.join(", "))
+}
 
+if (opcion == 1 && cantPer == 2){
+    console.log(hab2Op1.join(", "))
+}
 
+else if (opcion == 2 && cantPer == 2){
+    console.log(hab2Op2.join(", "))
+}
 
+if (opcion == 1 && cantPer == 3){
+    console.log(hab3Op1.join(", "))
+}
 
+else if (opcion == 2 && cantPer == 3){
+    console.log(hab3Op2.join(", "))
+}
 
+if (opcion == 1 && cantPer == 4){
+    console.log(hab4Op1.join(", "))
+}
+
+else if (opcion == 2 && cantPer == 4){
+    console.log(hab4Op2.join(", "))
+}
+
+console.log("Costo final por su estadía de " + datos[3] + " días" + " para " + datos[4] + " persona/s" + " es de " + "$" + precioFinal)
+console.log("Gracias por elegirnos")
 
 
 
