@@ -1,10 +1,10 @@
-// Entrega proyecto final N°1 Simulador de reserva de hotel Korax (Se esta evaluando nombre final)
+// Entrega complementaria DOM Simulador de reserva de hotel Korax (Se esta evaluando nombre final)
 
 // alert(Bienvenido a Hotel Korax por favor ingrese sus datos para poder registrarlo.)
 
 
 // Datos del usuario que se cargan con prompt y se pushean al array "datos"
-const datos = []
+/*const datos = []
 
 let nombre = prompt("Ingrese su nombre")
 let apellido = prompt("Ingrese su apellido")
@@ -26,7 +26,6 @@ datos.push(cantPer)
 
 let costoPorDia = 2000
 
-
 // Por el momento me parece mejor guardar los datos de las habitaciones en un array
 const hab1Op1 = ["1 Dormitorio", "1 Baño", "Cocina", "Living", "Pileta"]
 const hab1Op2 = ["1 Dormitorio", "1 Baño", "Cocina", "Living", "Balcón"]
@@ -46,8 +45,7 @@ function opcionHab(cantFam){
     
     if (cantFam == 1){
         alert("--Opcion 1--" + "\n" + hab1Op1.join("\n") + "\n" + "--Opcion 2--" + "\n" + hab1Op2.join("\n"))
-        op = parseInt(prompt("Igrese habitacion que desee"))
-        
+        op = parseInt(prompt("Igrese habitacion que desee"))        
     }
     
     if (cantFam == 2){
@@ -124,7 +122,7 @@ const precioFinal = (cantFam, cost, dia) => servicioHotel(cantFam) + precioHab(c
 let precioHabitacion = precioHab(costoPorDia, diasEstadia, cantPer)*/
 
 // Uso un objeto a modo de ticket para mostrarlo por consola
-class Ticket{
+/*class Ticket{
     constructor(cliente, dias, cantFam, op){
         this.cliente = cliente
         this.dias = dias
@@ -180,4 +178,74 @@ ticketCliente.opHab(opcion, cantPer)
 
 // Salida por consola el detallado de lo que eligio el usuario
 console.log("Costo final por su estadía de " + ticketCliente.dias + " días" + " para " + ticketCliente.cantFam + " persona/s" + " es de " + "$" + precioFinal(cantPer, costoPorDia, diasEstadia))
-console.log("Gracias por elegirnos.")
+console.log("Gracias por elegirnos.")*/
+
+
+
+
+
+
+
+
+
+class Habitacion{
+    constructor(id, dormitorio, banio, cocina, living, plus){
+        this.id = id 
+        this.dormitorio = dormitorio
+        this.banio = banio
+        this.cocina = cocina
+        this.living = living
+        this.plus = plus
+    }
+}
+
+
+const hab1Op1Ob = new Habitacion(1, "1", "1", "Si", "Si", "Pileta")
+const hab1Op2Ob = new Habitacion(2, "1", "1", "Si", "Si", "Balcón")
+
+const hab2Op1Ob = new Habitacion(3, "2", "1", "Si", "Si", "Pileta")
+const hab2Op2Ob = new Habitacion(4, "2", "1", "Si", "Si", "Balcón")
+
+const hab3Op1Ob = new Habitacion(5, "3", "2", "Si", "Si", "Pileta")
+const hab3Op2Ob = new Habitacion(6, "3", "2", "Si", "Si", "Balcón")
+
+const hab4Op1Ob = new Habitacion(7, "4", "2", "Si", "Si", "Pileta")
+const hab4Op2Ob = new Habitacion(8, "4", "2", "Si", "Si", "Balcón")
+
+
+const habitaciones = [hab1Op1Ob, hab1Op2Ob, hab2Op1Ob, hab2Op2Ob, hab3Op1Ob, hab3Op2Ob, hab4Op1Ob, hab4Op2Ob]
+
+
+let tablaHab = document.getElementById("tablaHab")
+
+
+tablaHab.innerHTML = `
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Dormitorios</th>
+                <th scope="col">Baños</th>
+                <th scope="col">Cocina</th>
+                <th scope="col">Living</th>
+                <th scope="col">Plus</th>
+            </tr>
+        </thead>
+        <tbody id="divHabitaciones">
+        </tbody>
+    </table>`
+
+
+let divHabitaciones = document.getElementById("divHabitaciones")
+
+habitaciones.forEach(habArray =>{
+    divHabitaciones.innerHTML += `
+    <tr id="${habArray.id}">
+        <th scope="row">${habArray.dormitorio}</th>
+        <td>${habArray.banio}</td>
+        <td>${habArray.cocina}</td>
+        <td>${habArray.living}</td>
+        <td>${habArray.plus}</td>
+    </tr>   
+    `
+})
+
