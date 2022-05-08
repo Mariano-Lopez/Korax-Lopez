@@ -1,47 +1,121 @@
-// Entrega complementaria DOM Simulador de reserva de hotel Korax (Se esta evaluando nombre final)
-
-// alert(Bienvenido a Hotel Korax por favor ingrese sus datos para poder registrarlo.)
-
-
-// Datos del usuario que se cargan con prompt y se pushean al array "datos"
-/*const datos = []
-
-let nombre = prompt("Ingrese su nombre")
-let apellido = prompt("Ingrese su apellido")
-
-let usuario = nombre + " " + apellido
-datos.push(usuario)
-
-let fechaDeLlegada = prompt("Ingrese fecha de llegada (formato dd/mm/aa)")
-datos.push(fechaDeLlegada)
-
-let fechaDeIda = prompt("Ingrese fecha de ida (formato dd/mm/aa)")
-datos.push(fechaDeIda)
-
-let diasEstadia = parseInt(prompt("Dias de estadia"))
-datos.push(diasEstadia)
-
-let cantPer = parseInt(prompt("Cantidad de personas"))
-datos.push(cantPer)
+// Entrega Eventos Simulador de reserva de hotel Korax (Se esta evaluando nombre final)
 
 let costoPorDia = 2000
+let tablaHab = document.getElementById("tablaHab")
+let formulario = document.getElementById("divForm")
+const datos = []
 
-// Por el momento me parece mejor guardar los datos de las habitaciones en un array
-const hab1Op1 = ["1 Dormitorio", "1 Baño", "Cocina", "Living", "Pileta"]
-const hab1Op2 = ["1 Dormitorio", "1 Baño", "Cocina", "Living", "Balcón"]
+class Habitacion{
+    constructor(id, dormitorio, banio, cocina, living, plus){
+        this.id = id 
+        this.dormitorio = dormitorio
+        this.banio = banio
+        this.cocina = cocina
+        this.living = living
+        this.plus = plus
+    }
+}
 
-const hab2Op1 = ["2 Dormitorios", "1 Baño", "Cocina", "Living", "Pileta"]
-const hab2Op2 = ["2 Dormitorios", "1 Baño", "Cocina", "Living", "Balcón"]
+const hab1Op1Ob = new Habitacion(1, "1", "1", "Si", "Si", "Pileta")
+const hab1Op2Ob = new Habitacion(2, "1", "1", "Si", "Si", "Balcón")
 
-const hab3Op1 = ["3 Dormitorios", "2 Baños", "Cocina", "Living", "Pileta"]
-const hab3Op2 = ["3 Dormitorios", "2 Baños", "Cocina", "Living", "Balcón"]
+const hab2Op1Ob = new Habitacion(3, "2", "1", "Si", "Si", "Pileta")
+const hab2Op2Ob = new Habitacion(4, "2", "1", "Si", "Si", "Balcón")
 
-const hab4Op1 = ["4 Dormitorios", "2 Baños", "Cocina", "Living", "Pileta"]
-const hab4Op2 = ["4 Dormitorios", "2 Baños", "Cocina", "Living", "Balcón"]
+const hab3Op1Ob = new Habitacion(5, "3", "2", "Si", "Si", "Pileta")
+const hab3Op2Ob = new Habitacion(6, "3", "2", "Si", "Si", "Balcón")
 
+const hab4Op1Ob = new Habitacion(7, "4", "2", "Si", "Si", "Pileta")
+const hab4Op2Ob = new Habitacion(8, "4", "2", "Si", "Si", "Balcón")
+
+
+const habitaciones = [hab1Op1Ob, hab1Op2Ob, hab2Op1Ob, hab2Op2Ob, hab3Op1Ob, hab3Op2Ob, hab4Op1Ob, hab4Op2Ob]
+
+
+
+formulario.addEventListener(`submit`, (e)=>{
+    e.preventDefault()
+    let nombre = document.getElementById(`nombreUs`).value
+    let apellido = document.getElementById(`apelUs`).value
+    let usuario = nombre + " " + apellido
+    let fechaDeLlegada = document.getElementById(`fechLlUs`).value
+    let fechaDeIda = document.getElementById(`fechIdaUs`).value
+    let diasEstadia = document.getElementById(`diasEstUs`).value
+    let cantPer = document.getElementById(`cantPerUs`).value
+
+    let cliente = {usuario: usuario, fechaDeLlegada: fechaDeLlegada, fechaDeIda: fechaDeIda, diasEstadia: diasEstadia, cantPer: cantPer}
+
+    datos.push(cliente)
+    console.log(cliente)
+    formulario.reset()
+    
+})
+
+cantPerUs.addEventListener(`change`, () =>{
+    
+    let filtro = cantPerUs.value
+    let filtroHab = habitaciones.filter( habitacion => habitacion.dormitorio.includes(filtro))
+
+    filtroHab.forEach(habitacion => {
+        tablaHab.innerHTML += `
+    <div class="card margin" style="width: 18rem;">
+        <div class="card-body">
+            <h3 class="card-title">Habitacion ${habitacion.id}</h3>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">${habitacion.dormitorio} Dormitorio/s  </li>
+            <li class="list-group-item">${habitacion.banio} Baño/s</li>
+            <li class="list-group-item">Cocina: ${habitacion.cocina}</li>
+            <li class="list-group-item">Living: ${habitacion.living}</li>
+            <li class="list-group-item">Pileta/Balcon: ${habitacion.plus}</li>
+        </ul>
+        
+    </div>
+    `
+    })
+}) 
+
+// 
+/*habitaciones.forEach(habArray =>{
+    tablaHab.innerHTML += `
+    <div class="card margin" style="width: 18rem;">
+        <div class="card-body">
+            <h3 class="card-title">Habitacion ${habArray.id}</h3>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">${habArray.dormitorio} Dormitorio/s  </li>
+            <li class="list-group-item">${habArray.banio} Baño/s</li>
+            <li class="list-group-item">Cocina: ${habArray.cocina}</li>
+            <li class="list-group-item">Living: ${habArray.living}</li>
+            <li class="list-group-item">Pileta/Balcon: ${habArray.plus}</li>
+        </ul>
+        
+    </div>
+    `
+})*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////// Elementos para uso futuro
 
 // Funcion para mostrarle el detallado de cada habitacion al usuario
-function opcionHab(cantFam){
+/*function opcionHab(cantFam){
     
     if (cantFam == 1){
         alert("--Opcion 1--" + "\n" + hab1Op1.join("\n") + "\n" + "--Opcion 2--" + "\n" + hab1Op2.join("\n"))
@@ -72,12 +146,31 @@ function opcionHab(cantFam){
     }
 
     return op
-}
+}*/
 
+/*const datos = []
+let nombre = document.getElementById(`nombreUs`)
+
+let apellido = document.getElementById(`apelUs`)
+
+let usuario = nombre + " " + apellido
+datos.push(usuario)
+
+let fechaDeLlegada = document.getElementById(`fechLlUs`)
+datos.push(fechaDeLlegada)
+
+let fechaDeIda = document.getElementById(`fechIdaUs`)
+datos.push(fechaDeIda)
+
+let diasEstadia = document.getElementById(`diasEstUs`)
+datos.push(diasEstadia)
+
+let cantPer = document.getElementById(`cantPerUs`)
+datos.push(cantPer)*/
 
 
 // Funcion para ofrecerle al usuario algun tipo de servicio del hotel si desea all inclusive no se le pregunta las otras opciones por redundancia
-function servicioHotel(cantFam){
+/*function servicioHotel(cantFam){
     servicio = 0
 
     allInclusive = prompt("¿Desea all inclusive?").toLowerCase()
@@ -118,11 +211,11 @@ let opcion = opcionHab(cantPer)
 const precioFinal = (cantFam, cost, dia) => servicioHotel(cantFam) + precioHab(cost, dia, cantFam) 
 
 
-/*let servi = servicioHotel(cantPer)
-let precioHabitacion = precioHab(costoPorDia, diasEstadia, cantPer)*/
+let servi = servicioHotel(cantPer)
+let precioHabitacion = precioHab(costoPorDia, diasEstadia, cantPer)
 
 // Uso un objeto a modo de ticket para mostrarlo por consola
-/*class Ticket{
+class Ticket{
     constructor(cliente, dias, cantFam, op){
         this.cliente = cliente
         this.dias = dias
@@ -179,73 +272,3 @@ ticketCliente.opHab(opcion, cantPer)
 // Salida por consola el detallado de lo que eligio el usuario
 console.log("Costo final por su estadía de " + ticketCliente.dias + " días" + " para " + ticketCliente.cantFam + " persona/s" + " es de " + "$" + precioFinal(cantPer, costoPorDia, diasEstadia))
 console.log("Gracias por elegirnos.")*/
-
-
-
-
-
-
-
-
-
-class Habitacion{
-    constructor(id, dormitorio, banio, cocina, living, plus){
-        this.id = id 
-        this.dormitorio = dormitorio
-        this.banio = banio
-        this.cocina = cocina
-        this.living = living
-        this.plus = plus
-    }
-}
-
-
-const hab1Op1Ob = new Habitacion(1, "1", "1", "Si", "Si", "Pileta")
-const hab1Op2Ob = new Habitacion(2, "1", "1", "Si", "Si", "Balcón")
-
-const hab2Op1Ob = new Habitacion(3, "2", "1", "Si", "Si", "Pileta")
-const hab2Op2Ob = new Habitacion(4, "2", "1", "Si", "Si", "Balcón")
-
-const hab3Op1Ob = new Habitacion(5, "3", "2", "Si", "Si", "Pileta")
-const hab3Op2Ob = new Habitacion(6, "3", "2", "Si", "Si", "Balcón")
-
-const hab4Op1Ob = new Habitacion(7, "4", "2", "Si", "Si", "Pileta")
-const hab4Op2Ob = new Habitacion(8, "4", "2", "Si", "Si", "Balcón")
-
-
-const habitaciones = [hab1Op1Ob, hab1Op2Ob, hab2Op1Ob, hab2Op2Ob, hab3Op1Ob, hab3Op2Ob, hab4Op1Ob, hab4Op2Ob]
-
-
-let tablaHab = document.getElementById("tablaHab")
-
-
-tablaHab.innerHTML = `
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">Dormitorios</th>
-                <th scope="col">Baños</th>
-                <th scope="col">Cocina</th>
-                <th scope="col">Living</th>
-                <th scope="col">Plus</th>
-            </tr>
-        </thead>
-        <tbody id="divHabitaciones">
-        </tbody>
-    </table>`
-
-
-let divHabitaciones = document.getElementById("divHabitaciones")
-
-habitaciones.forEach(habArray =>{
-    divHabitaciones.innerHTML += `
-    <tr id="${habArray.id}">
-        <th scope="row">${habArray.dormitorio}</th>
-        <td>${habArray.banio}</td>
-        <td>${habArray.cocina}</td>
-        <td>${habArray.living}</td>
-        <td>${habArray.plus}</td>
-    </tr>   
-    `
-})
-

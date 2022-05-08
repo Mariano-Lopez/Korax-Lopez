@@ -17,9 +17,50 @@
         <h1>Bienvenido a Hotel Korax</h1>
     </header>
     <main>
-        <h2>Nuestras Habitaciones</h2>
-        <div id="tablaHab">
+        <form class="row g-3 needs-validation" novalidate id="divForm">
+            <div class="col-md-4">
+                <label for="validationCustom01" class="form-label">Nombre</label>
+                <input type="text" class="form-control" id="nombreUs" required>
+            </div>
+            <div class="col-md-4">
+                <label for="validationCustom02" class="form-label">Apellido</label>
+                <input type="text" class="form-control" id="apelUs" required>
+            </div>
+            
+            <div class="col-md-4">
+                <label for="validationCustom02" class="form-label">Fecha de llegada</label>
+                <input type="text" class="form-control" id="fechLlUs" required>
+            </div>
+
+            <div class="col-md-4">
+                <label for="validationCustom02" class="form-label">Fecha de Ida</label>
+                <input type="text" class="form-control" id="fechIdaUs" required>
+            </div>
+
+            <div class="col-md-4">
+                <label for="validationCustom02" class="form-label">Dias de estadia</label>
+                <input type="number" class="form-control" id="diasEstUs" required>
+            </div>
+
+            <div class="col-md-4">
+                <label for="validationCustom02" class="form-label">Cantidad de personas</label>
+                <input type="text" class="form-control" id="cantPerUs" required>
+            </div>
+            
+            <div class="col-12">
+                <button class="btn btn-primary" type="submit">Buscar Habitaciones</button>
+            </div>
+        </form>
+        
+
+
+        <h2>Habitaciones recomendadas</h2>
+
+
+        <div id="tablaHab" class="row justify-content-evenly">
         </div>
+
+
         
 
     </main>
