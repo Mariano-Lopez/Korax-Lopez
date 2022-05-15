@@ -3,3 +3,10 @@
 .margin {
     margin: 1rem;
 }
+
+.tituloDatosFamiliar{
+    font-size: 2rem;
+    color: blue;
+    text-align: center;
+    text-decoration: underline 2 px black;
+}

@@ -1,11 +1,19 @@
 // Entrega Eventos Simulador de reserva de hotel Korax (Se esta evaluando nombre final)
 
 let costoPorDia = 2000
+
 let tablaHab = document.getElementById("tablaHab")
+
 let formulario = document.getElementById("divForm")
-const datos = []
+
+
+
+let datos = []
+
+let habitacionElegida = [] 
 
 class Habitacion{
+
     constructor(id, dormitorio, banio, cocina, living, plus){
         this.id = id 
         this.dormitorio = dormitorio
@@ -17,15 +25,19 @@ class Habitacion{
 }
 
 const hab1Op1Ob = new Habitacion(1, "1", "1", "Si", "Si", "Pileta")
+
 const hab1Op2Ob = new Habitacion(2, "1", "1", "Si", "Si", "Balcón")
 
 const hab2Op1Ob = new Habitacion(3, "2", "1", "Si", "Si", "Pileta")
+
 const hab2Op2Ob = new Habitacion(4, "2", "1", "Si", "Si", "Balcón")
 
 const hab3Op1Ob = new Habitacion(5, "3", "2", "Si", "Si", "Pileta")
+
 const hab3Op2Ob = new Habitacion(6, "3", "2", "Si", "Si", "Balcón")
 
 const hab4Op1Ob = new Habitacion(7, "4", "2", "Si", "Si", "Pileta")
+
 const hab4Op2Ob = new Habitacion(8, "4", "2", "Si", "Si", "Balcón")
 
 
@@ -36,29 +48,37 @@ const habitaciones = [hab1Op1Ob, hab1Op2Ob, hab2Op1Ob, hab2Op2Ob, hab3Op1Ob, hab
 formulario.addEventListener(`submit`, (e)=>{
     e.preventDefault()
     let nombre = document.getElementById(`nombreUs`).value
+
     let apellido = document.getElementById(`apelUs`).value
+
     let usuario = nombre + " " + apellido
+
     let fechaDeLlegada = document.getElementById(`fechLlUs`).value
+
     let fechaDeIda = document.getElementById(`fechIdaUs`).value
+
     let diasEstadia = document.getElementById(`diasEstUs`).value
+
     let cantPer = document.getElementById(`cantPerUs`).value
+
+    datosFamlia(cantPer)
 
     let cliente = {usuario: usuario, fechaDeLlegada: fechaDeLlegada, fechaDeIda: fechaDeIda, diasEstadia: diasEstadia, cantPer: cantPer}
 
     datos.push(cliente)
+
     console.log(cliente)
+
     formulario.reset()
     
 })
 
-cantPerUs.addEventListener(`change`, () =>{
-    
-    let filtro = cantPerUs.value
-    let filtroHab = habitaciones.filter( habitacion => habitacion.dormitorio.includes(filtro))
 
-    filtroHab.forEach(habitacion => {
+
+function mostrarHabs(habitaciones){
+    habitaciones.forEach(habitacion => {
         tablaHab.innerHTML += `
-    <div class="card margin" style="width: 18rem;">
+    <div class="card margin" style="width: 18rem; id= habitacion${habitacion.id}">
         <div class="card-body">
             <h3 class="card-title">Habitacion ${habitacion.id}</h3>
         </div>
@@ -69,47 +89,114 @@ cantPerUs.addEventListener(`change`, () =>{
             <li class="list-group-item">Living: ${habitacion.living}</li>
             <li class="list-group-item">Pileta/Balcon: ${habitacion.plus}</li>
         </ul>
+
+        <div class= "btn btn-dark" >
+                <button class="btn btn-info" type="submit" id = "boton${habitacion.id}">Reservar</button>
+        </div>
         
     </div>
     `
+    
     })
+}
+
+
+
+function errorCarga(){
+    tablaHab.innerHTML = `
+        <div class="card margin" style="width: 40rem;">
+            <div class="card-body">
+                <h3 class="card-title">Nos disponemos habitacion para esa cantidad de personas (valor incorrecto)</h3>
+            </div>
+        </div>
+        `
+}
+
+
+function datosFamlia(cantPer){
+    let i = 1
+    while (i < cantPer){
+        i++
+        divDatos.innerHTML += `
+        <span class="tituloDatosFamiliar">Datos de acompañante/s</span>
+        <div class="col-md-4">
+                <label for="validationCustom01" class="form-label">Nombre</label>
+                <input type="text" class="form-control" id="nombreFam${i-1}">
+            </div>
+            <div class="col-md-4">
+                <label for="validationCustom02" class="form-label">Apellido</label>
+                <input type="text" class="form-control" id="apellFam${i-1}">
+            </div>
+
+            <div class="col-md-4">
+                <label for="validationCustom02" class="form-label">Edad</label>
+                <input type="text" class="form-control" id="edadFam${i-1}">
+            </div>
+        `
+
+
+    }
+    
+}
+
+cantPerUs.addEventListener(`change`, () =>{
+
+    
+    let filtro = cantPerUs.value
+
+    let filtroHab = habitaciones.filter( habitacion => habitacion.dormitorio.includes(filtro))
+
+    tablaHab.innerHTML = ' '
+
+    
+    if ( 1 <= filtro && filtro <= 4){
+        mostrarHabs(filtroHab)
+    }
+    
+    else{
+        errorCarga()
+    }
 }) 
 
-// 
-/*habitaciones.forEach(habArray =>{
-    tablaHab.innerHTML += `
-    <div class="card margin" style="width: 18rem;">
-        <div class="card-body">
-            <h3 class="card-title">Habitacion ${habArray.id}</h3>
-        </div>
-        <ul class="list-group list-group-flush">
-            <li class="list-group-item">${habArray.dormitorio} Dormitorio/s  </li>
-            <li class="list-group-item">${habArray.banio} Baño/s</li>
-            <li class="list-group-item">Cocina: ${habArray.cocina}</li>
-            <li class="list-group-item">Living: ${habArray.living}</li>
-            <li class="list-group-item">Pileta/Balcon: ${habArray.plus}</li>
-        </ul>
-        
-    </div>
-    `
-})*/
+mostrarHabs(habitaciones)
 
 
 
 
+habitaciones.forEach(habitacion =>{
+    document.getElementById(`boton${habitacion.id}`).addEventListener("click", ()=>{
+        habitacionElegida.push(habitacion)
+        localStorage.setItem("habitacionElegida", JSON.stringify(habitacionElegida))
+        let i = 1
+        while (i < cantPer){
+            i++
+            divDatos.innerHTML += `
+                <span class="tituloDatosFamiliar">Datos de acompañante/s</span>
+                <div class="col-md-4">
+                        <label for="validationCustom01" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="nombreFam${i-1}">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="validationCustom02" class="form-label">Apellido</label>
+                        <input type="text" class="form-control" id="apellFam${i-1}">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="validationCustom02" class="form-label">Edad</label>
+                        <input type="text" class="form-control" id="edadFam${i-1}">
+                    </div>
+                `
+                }
+    })
+
+})
 
 
 
-
-
-
-
-
-
-
-
-
-
+document.getElementById(`botonHab`).addEventListener("click", ()=>{
+    let habParse = JSON.parse(localStorage.getItem("habitacionElegida")) 
+    console.log(habParse)
+})
 
 
 //////////////////////////////////////////////////////////////// Elementos para uso futuro
