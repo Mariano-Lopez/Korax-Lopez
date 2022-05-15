@@ -2,15 +2,13 @@
 
 let costoPorDia = 2000
 
+
+
 let tablaHab = document.getElementById("tablaHab")
 
 let formulario = document.getElementById("divForm")
 
-
-
 let datos = []
-
-let habitacionElegida = [] 
 
 class Habitacion{
 
@@ -23,6 +21,7 @@ class Habitacion{
         this.plus = plus
     }
 }
+
 
 const hab1Op1Ob = new Habitacion(1, "1", "1", "Si", "Si", "Pileta")
 
@@ -44,6 +43,11 @@ const hab4Op2Ob = new Habitacion(8, "4", "2", "Si", "Si", "Balcón")
 const habitaciones = [hab1Op1Ob, hab1Op2Ob, hab2Op1Ob, hab2Op2Ob, hab3Op1Ob, hab3Op2Ob, hab4Op1Ob, hab4Op2Ob]
 
 
+mostrarHabs(habitaciones)
+
+let habitacionElegida = JSON.parse(localStorage.getItem("habitacionElegida")) ?? [] 
+
+
 
 formulario.addEventListener(`submit`, (e)=>{
     e.preventDefault()
@@ -61,13 +65,29 @@ formulario.addEventListener(`submit`, (e)=>{
 
     let cantPer = document.getElementById(`cantPerUs`).value
 
-    datosFamlia(cantPer)
+    if(1 >= cantPer || cantPer < 5){
+        datosFamlia(cantPer)
+        
+    }
+    else{
+        errorCarga()
+    }
+        
+    
 
     let cliente = {usuario: usuario, fechaDeLlegada: fechaDeLlegada, fechaDeIda: fechaDeIda, diasEstadia: diasEstadia, cantPer: cantPer}
 
     datos.push(cliente)
 
     console.log(cliente)
+
+    // Uso del spread
+    const clienteHab = {
+        ...cliente,
+        habitacionE: habitacionElegida
+    }  
+
+    console.log(clienteHab)
 
     formulario.reset()
     
@@ -91,7 +111,7 @@ function mostrarHabs(habitaciones){
         </ul>
 
         <div class= "btn btn-dark" >
-                <button class="btn btn-info" type="submit" id = "boton${habitacion.id}">Reservar</button>
+                <button class="btn btn-info" type="submit" id ="boton${habitacion.id}">Reservar</button>
         </div>
         
     </div>
@@ -106,7 +126,7 @@ function errorCarga(){
     tablaHab.innerHTML = `
         <div class="card margin" style="width: 40rem;">
             <div class="card-body">
-                <h3 class="card-title">Nos disponemos habitacion para esa cantidad de personas (valor incorrecto)</h3>
+                <h3 class="card-title">No disponemos habitacion para esa cantidad de personas (valor incorrecto)</h3>
             </div>
         </div>
         `
@@ -114,11 +134,14 @@ function errorCarga(){
 
 
 function datosFamlia(cantPer){
+    
+    divDatos.innerHTML = " "
     let i = 1
+    
     while (i < cantPer){
         i++
         divDatos.innerHTML += `
-        <span class="tituloDatosFamiliar">Datos de acompañante/s</span>
+        <span class="tituloDatosFamiliar">Datos de acompañante</span>
         <div class="col-md-4">
                 <label for="validationCustom01" class="form-label">Nombre</label>
                 <input type="text" class="form-control" id="nombreFam${i-1}">
@@ -133,15 +156,41 @@ function datosFamlia(cantPer){
                 <input type="text" class="form-control" id="edadFam${i-1}">
             </div>
         `
-
-
+        
+    
     }
+    
+    // De las 2 formas funciona quisiera saber con cual es mejor.
+
+    /*divDatos.innerHTML = " "
+    
+    for (let i = 1; i < cantPer; i++){
+        divDatos.innerHTML += `
+        <span class="tituloDatosFamiliar">Datos de acompañante</span>
+        <div class="col-md-4">
+                <label for="validationCustom01" class="form-label">Nombre</label>
+                <input type="text" class="form-control" id="nombreFam${i-1}">
+            </div>
+            <div class="col-md-4">
+                <label for="validationCustom02" class="form-label">Apellido</label>
+                <input type="text" class="form-control" id="apellFam${i-1}">
+            </div>
+
+            <div class="col-md-4">
+                <label for="validationCustom02" class="form-label">Edad</label>
+                <input type="text" class="form-control" id="edadFam${i-1}">
+            </div>
+        `
+        
+    }*/
+
     
 }
 
+
+
 cantPerUs.addEventListener(`change`, () =>{
 
-    
     let filtro = cantPerUs.value
 
     let filtroHab = habitaciones.filter( habitacion => habitacion.dormitorio.includes(filtro))
@@ -151,55 +200,44 @@ cantPerUs.addEventListener(`change`, () =>{
     
     if ( 1 <= filtro && filtro <= 4){
         mostrarHabs(filtroHab)
-    }
+        
+        }
     
     else{
         errorCarga()
     }
+
+    // En caso de que elija habitacion con filtro
+    filtroHab.forEach(habitacion =>{
+        document.getElementById(`boton${habitacion.id}`).addEventListener("click", ()=>{
+            
+            habitacionElegida.push(habitacion)
+            localStorage.setItem("habitacionElegida", JSON.stringify(habitacionElegida))
+            
+            })})
+
+
+    
+
 }) 
 
-mostrarHabs(habitaciones)
-
-
-
-
+// En caso de que elija habitacion sin filtro
 habitaciones.forEach(habitacion =>{
     document.getElementById(`boton${habitacion.id}`).addEventListener("click", ()=>{
         habitacionElegida.push(habitacion)
         localStorage.setItem("habitacionElegida", JSON.stringify(habitacionElegida))
-        let i = 1
-        while (i < cantPer){
-            i++
-            divDatos.innerHTML += `
-                <span class="tituloDatosFamiliar">Datos de acompañante/s</span>
-                <div class="col-md-4">
-                        <label for="validationCustom01" class="form-label">Nombre</label>
-                        <input type="text" class="form-control" id="nombreFam${i-1}">
-                    </div>
-                    <div class="col-md-4">
-                        <label for="validationCustom02" class="form-label">Apellido</label>
-                        <input type="text" class="form-control" id="apellFam${i-1}">
-                    </div>
-
-                    <div class="col-md-4">
-                        <label for="validationCustom02" class="form-label">Edad</label>
-                        <input type="text" class="form-control" id="edadFam${i-1}">
-                    </div>
-                `
-                }
     })
 
 })
 
 
+//////////////////////////////////////////////////////////////// Elementos para uso futuro
 
-document.getElementById(`botonHab`).addEventListener("click", ()=>{
+/*document.getElementById(`botonHab`).addEventListener("click", ()=>{
     let habParse = JSON.parse(localStorage.getItem("habitacionElegida")) 
     console.log(habParse)
-})
+})*/
 
-
-//////////////////////////////////////////////////////////////// Elementos para uso futuro
 
 // Funcion para mostrarle el detallado de cada habitacion al usuario
 /*function opcionHab(cantFam){
