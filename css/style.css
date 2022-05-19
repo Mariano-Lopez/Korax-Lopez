@@ -7,5 +7,15 @@
 .tituloDatosFamiliar{
     font-size: 2rem;
     text-align: center;
-    text-decoration: underline 2px black;
+    text-decoration: underline 2px rgb(7, 7, 226);
+}
+
+body{
+    font-family: 'Playfair Display', serif;
+    background-color: black;
+    color: white;
+}
+
+.colorTextCard{
+    color: white;
 }

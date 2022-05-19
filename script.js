@@ -2,13 +2,15 @@
 
 let costoPorDia = 2000
 
-
-
 let tablaHab = document.getElementById("tablaHab")
 
-let formulario = document.getElementById("divForm")
+let formUsuario = document.getElementById("divForm")
+
+let formDatos = document.getElementById("formDatos")
 
 let datos = []
+
+let datosAcompaniante = []
 
 class Habitacion{
 
@@ -49,7 +51,7 @@ let habitacionElegida = JSON.parse(localStorage.getItem("habitacionElegida")) ??
 
 
 
-formulario.addEventListener(`submit`, (e)=>{
+formUsuario.addEventListener(`submit`, (e)=>{
     e.preventDefault()
     let nombre = document.getElementById(`nombreUs`).value
 
@@ -89,7 +91,29 @@ formulario.addEventListener(`submit`, (e)=>{
 
     console.log(clienteHab)
 
-    formulario.reset()
+    //formUsuario.reset()
+    
+})
+
+
+formDatos.addEventListener(`sumbit`, (e) =>{
+    e.preventDefault()
+    let idFam = document.getElementById(`idFam${i-1}`).value 
+
+    let nomAcom = document.getElementById(`nombreFam${i-1}`).value
+
+    let apellAcom = document.getElementById(`apellFam${i-1}`).value
+
+    let edadAcom = document.getElementById(`edadFam${i-1}`).value
+
+    let datosPersona = {idFam : idFam, nomAcomp : nomAcom, apellAcom: apellAcom, edadAcom : edadAcom}
+    
+    
+    datosAcompaniante.push(datosPersona)
+    
+
+    console.log(nomAcom)
+
     
 })
 
@@ -98,20 +122,20 @@ formulario.addEventListener(`submit`, (e)=>{
 function mostrarHabs(habitaciones){
     habitaciones.forEach(habitacion => {
         tablaHab.innerHTML += `
-    <div class="card margin" style="width: 18rem; id= habitacion${habitacion.id}">
+    <div class="card margin bg-dark border border-white" style="width: 18rem; id= habitacion${habitacion.id}">
         <div class="card-body">
             <h3 class="card-title">Habitacion ${habitacion.id}</h3>
         </div>
         <ul class="list-group list-group-flush">
-            <li class="list-group-item">${habitacion.dormitorio} Dormitorio/s  </li>
-            <li class="list-group-item">${habitacion.banio} Baño/s</li>
-            <li class="list-group-item">Cocina: ${habitacion.cocina}</li>
-            <li class="list-group-item">Living: ${habitacion.living}</li>
-            <li class="list-group-item">Pileta/Balcon: ${habitacion.plus}</li>
+            <li class="list-group-item bg-dark colorTextCard">${habitacion.dormitorio} Dormitorio/s  </li>
+            <li class="list-group-item bg-dark colorTextCard">${habitacion.banio} Baño/s</li>
+            <li class="list-group-item bg-dark colorTextCard">Cocina: ${habitacion.cocina}</li>
+            <li class="list-group-item bg-dark colorTextCard">Living: ${habitacion.living}</li>
+            <li class="list-group-item bg-dark colorTextCard">Pileta/Balcon: ${habitacion.plus}</li>
         </ul>
 
         <div class= "btn btn-dark" >
-                <button class="btn btn-info" type="submit" id ="boton${habitacion.id}">Reservar</button>
+                <button class="btn btn-primary" type="submit" id ="boton${habitacion.id}">Reservar</button>
         </div>
         
     </div>
@@ -124,7 +148,7 @@ function mostrarHabs(habitaciones){
 
 function errorCarga(){
     tablaHab.innerHTML = `
-        <div class="card margin" style="width: 40rem;">
+        <div class="card margin bg-dark colorTextCard" style="width: 40rem;">
             <div class="card-body">
                 <h3 class="card-title">No disponemos habitacion para esa cantidad de personas (valor incorrecto)</h3>
             </div>
@@ -135,15 +159,17 @@ function errorCarga(){
 
 function datosFamlia(cantPer){
     
-    divDatos.innerHTML = " "
+    formDatos.innerHTML = " "
     let i = 1
     
     while (i < cantPer){
         i++
-        divDatos.innerHTML += `
+        formDatos.innerHTML += `
         <span class="tituloDatosFamiliar">Datos de acompañante</span>
-        <div class="col-md-4">
-                <label for="validationCustom01" class="form-label">Nombre</label>
+        
+        <div class="row" id="idFam${i-1}">    
+            <div class="col-md-4">
+                <label for="validationCustom01" class="form-label" required>Nombre</label>
                 <input type="text" class="form-control" id="nombreFam${i-1}">
             </div>
             <div class="col-md-4">
@@ -155,17 +181,30 @@ function datosFamlia(cantPer){
                 <label for="validationCustom02" class="form-label">Edad</label>
                 <input type="text" class="form-control" id="edadFam${i-1}">
             </div>
-        `
+        </div>
         
-    
+
+        <div class= "d-flex justify-content-center col-md-12">
+            <button class="btn btn-dark " type="submit">Cargar</button>
+        </div>
+        
+        `
     }
+
+    
+
+
+
+    //datosAcompaniante.push(nomAcom)
+
+
     
     // De las 2 formas funciona quisiera saber con cual es mejor.
 
-    /*divDatos.innerHTML = " "
+    /*formDatos.innerHTML = " "
     
     for (let i = 1; i < cantPer; i++){
-        divDatos.innerHTML += `
+        formDatos.innerHTML += `
         <span class="tituloDatosFamiliar">Datos de acompañante</span>
         <div class="col-md-4">
                 <label for="validationCustom01" class="form-label">Nombre</label>
@@ -179,6 +218,10 @@ function datosFamlia(cantPer){
             <div class="col-md-4">
                 <label for="validationCustom02" class="form-label">Edad</label>
                 <input type="text" class="form-control" id="edadFam${i-1}">
+            </div>
+
+            <div>
+                <button class="btn btn-info" type="submit" id="botonAcom" >Cargar acompañante</button>
             </div>
         `
         
@@ -214,7 +257,8 @@ cantPerUs.addEventListener(`change`, () =>{
             habitacionElegida.push(habitacion)
             localStorage.setItem("habitacionElegida", JSON.stringify(habitacionElegida))
             
-            })})
+            })
+        })
 
 
     
@@ -229,6 +273,49 @@ habitaciones.forEach(habitacion =>{
     })
 
 })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //////////////////////////////////////////////////////////////// Elementos para uso futuro
@@ -273,25 +360,6 @@ habitaciones.forEach(habitacion =>{
     return op
 }*/
 
-/*const datos = []
-let nombre = document.getElementById(`nombreUs`)
-
-let apellido = document.getElementById(`apelUs`)
-
-let usuario = nombre + " " + apellido
-datos.push(usuario)
-
-let fechaDeLlegada = document.getElementById(`fechLlUs`)
-datos.push(fechaDeLlegada)
-
-let fechaDeIda = document.getElementById(`fechIdaUs`)
-datos.push(fechaDeIda)
-
-let diasEstadia = document.getElementById(`diasEstUs`)
-datos.push(diasEstadia)
-
-let cantPer = document.getElementById(`cantPerUs`)
-datos.push(cantPer)*/
 
 
 // Funcion para ofrecerle al usuario algun tipo de servicio del hotel si desea all inclusive no se le pregunta las otras opciones por redundancia
