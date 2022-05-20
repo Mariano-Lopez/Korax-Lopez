@@ -150,7 +150,6 @@ function datosFamlia(cantPer){
     
     formDatos.innerHTML = " "
 
-    let i = 1
 
     if (cantPer == 2){
         formDatos.innerHTML += `<span class="tituloDatosFamiliar">Datos de acompañante</span>`
@@ -161,55 +160,70 @@ function datosFamlia(cantPer){
     }
 
     
-    while (i < cantPer){
+    for (let i=1; i<cantPer; i++){
         
-        i++
         formDatos.innerHTML += `
 
-        <div class="row" id="idFam${i-1}">    
+        <div class="row" id="idFam${i}">    
             <div class="col-md-4">
                 <label for="validationCustom01" class="form-label" required>Nombre</label>
-                <input type="text" class="form-control" id="nombreFam${i-1}">
+                <input type="text" class="form-control" id="nombreFam${i}">
             </div>
             <div class="col-md-4">
                 <label for="validationCustom02" class="form-label">Apellido</label>
-                <input type="text" class="form-control" id="apellFam${i-1}">
+                <input type="text" class="form-control" id="apellFam${i}">
             </div>
 
             <div class="col-md-4">
                 <label for="validationCustom02" class="form-label">Edad</label>
-                <input type="text" class="form-control" id="edadFam${i-1}">
+                <input type="text" class="form-control" id="edadFam${i}">
             </div>
         </div>
 
         <div class= "d-flex justify-content-center col-md-12">
-        <button class="btn btn-dark prueba1" type="submit" id= "btnCarga${i-1}">Cargar</button>
+        <button class="btn btn-dark prueba1" type="submit" id= "btnCarga${i}">Cargar</button>
         </div>
         `
         
-        let botonCarga = document.getElementById(`btnCarga${i-1}`)
+        
 
-
-        botonCarga.addEventListener(`click`, ()=>{
-
-            let idFam = i 
-
-            let nomAcom = document.getElementById(`nombreFam${i-1}`).value
-
-            let apellAcom = document.getElementById(`apellFam${i-1}`).value
-
-            let edadAcom = document.getElementById(`edadFam${i-1}`).value
-
-            let datosPersona = {idFam: idFam, nomAcomp: nomAcom, apellAcom: apellAcom, edadAcom: edadAcom}
-
-            datosAcompaniante.push(datosPersona)
-            
-            console.log(datosAcompaniante)
-        })
         
     }
 
+    for (let i=1; i<cantPer; i++){
+        btnCarga = document.getElementById(`btnCarga${i}`)
+        
+    btnCarga.addEventListener(`click`, ()=>{
 
+        let idFam = i 
+
+        let nomAcom = document.getElementById(`nombreFam${i}`).value
+
+        let apellAcom = document.getElementById(`apellFam${i}`).value
+
+        let edadAcom = document.getElementById(`edadFam${i}`).value
+
+        let datosPersona = {idFam: idFam, nomAcomp: nomAcom, apellAcom: apellAcom, edadAcom: edadAcom}
+
+        datosAcompaniante.push(datosPersona)
+        Toastify({
+            text: `Datos de ${nomAcom} cargados correctamente`,
+            duration: 3000,
+            newWindow: true,
+            close: false,
+            gravity: "top",
+            position: "right",
+            stopOnFocus: true,
+            style: {
+                color:"white",
+                background: "black",
+            },
+            onClick: function(){}
+        }).showToast();
+        console.log(datosAcompaniante)
+    })
+}
+    
     
     
 
