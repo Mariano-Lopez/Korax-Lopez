@@ -12,6 +12,12 @@ let datos = []
 
 let datosAcompaniante = []
 
+let datosJson = document.getElementById('datosJson')
+
+let paquetesCliente = document.getElementById('paquetesCliente')
+
+
+
 class Habitacion{
 
     constructor(id, dormitorio, banio, cocina, living, plus){
@@ -44,6 +50,25 @@ const hab4Op2Ob = new Habitacion(8, "4", "2", "Si", "Si", "Balcón")
 
 const habitaciones = [hab1Op1Ob, hab1Op2Ob, hab2Op1Ob, hab2Op2Ob, hab3Op1Ob, hab3Op2Ob, hab4Op1Ob, hab4Op2Ob]
 
+class Adicional {
+    constructor(id, tit, item1, item2, item3){
+        this.id = id
+        this.tit = tit
+        this.item1 = item1
+        this.item2 = item2
+        this.item3 = item3
+    }
+}
+
+const adicComida= new Adicional(1, "Incluir desayuno, merienda y cena", "Desayuno", "Merienda", "Cena")
+
+const adicTour = new Adicional(2,"Tours por cordoba","Salida a Carlos Paz", "Trekking Cerro Uritorco", "Recorrido mirador Icho Cruz")
+
+const adicEvento = new Adicional(3, "Eventos del hotel", "Juegos para grandes y chicos", "Pase libre al salon de eventos", "Uso parque interno del hotel" )
+
+const adicionales = [adicComida, adicTour, adicEvento]
+
+
 
 mostrarHabs(habitaciones)
 
@@ -67,39 +92,50 @@ formUsuario.addEventListener(`submit`, (e)=>{
 
     let cantPer = document.getElementById(`cantPerUs`).value
 
-    
+    let cliente = {usuario: usuario, fechaDeLlegada: fechaDeLlegada, fechaDeIda: fechaDeIda, diasEstadia: diasEstadia, cantPer: cantPer}
 
     
+
+    console.log(cliente)
+
     if(1 >= cantPer || cantPer < 5){
         datosFamlia(cantPer)
+        adicionalCliente(cantPer,costoPorDia, cliente)
         
     }
     else{
         errorCarga()
+        formDatos.innerHTML = ''
+        paquetesCliente.innerHTML = ''
     }
     
 
-    
+    /* Podrias poner esto en una funcion*/
+    let botonAdicionalSi = document.getElementById('adicionalSi')
+
+    botonAdicionalSi.addEventListener('click', ()=>{
+        cliente = {
+            ...cliente,
+            adicional: "All inclusive"
+        }
+        datos.push(cliente)
+        localStorage.setItem("Cliente", JSON.stringify(datos))
         
+        console.log(cliente)
+    })
     
+    let botonAdicionalNo = document.getElementById('adicionalNo')
 
-    let cliente = {usuario: usuario, fechaDeLlegada: fechaDeLlegada, fechaDeIda: fechaDeIda, diasEstadia: diasEstadia, cantPer: cantPer}
 
-    datos.push(cliente)
+    botonAdicionalNo.addEventListener('click', ()=>{
+        adicionalesCliente(cantPer,cliente,adicionales)
+    })
 
-    console.log(cliente)
-
-    // Uso del spread
-    const clienteHab = {
-        ...cliente,
-        habitacionE: habitacionElegida
-    }  
-
-    console.log(clienteHab)
-
-    //formUsuario.reset()
+    
+    //////////////////////////////////////////////////////
     
 })
+
 
 
 formDatos.addEventListener('click', (e) =>{
@@ -108,26 +144,35 @@ formDatos.addEventListener('click', (e) =>{
 
 
 
+
+
+
+
 function mostrarHabs(habitaciones){
+    /*NO TOCAR TAMPOCO */
+    tablaHab.innerHTML+='<h2 class=" text-center">Habitaciones recomendadas</h2> '
+
     habitaciones.forEach(habitacion => {
         tablaHab.innerHTML += `
-    <div class="card margin bg-dark border border-white" style="width: 18rem; id= habitacion${habitacion.id}">
-        <div class="card-body">
-            <h3 class="card-title">Habitacion ${habitacion.id}</h3>
-        </div>
-        <ul class="list-group list-group-flush">
-            <li class="list-group-item bg-dark colorTextCard">${habitacion.dormitorio} Cama/s  </li>
-            <li class="list-group-item bg-dark colorTextCard">${habitacion.banio} Baño/s</li>
-            <li class="list-group-item bg-dark colorTextCard">Cocina: ${habitacion.cocina}</li>
-            <li class="list-group-item bg-dark colorTextCard">Living: ${habitacion.living}</li>
-            <li class="list-group-item bg-dark colorTextCard">Pileta/Balcon: ${habitacion.plus}</li>
-        </ul>
-
-        <div class= "btn btn-dark" >
-                <button class="btn btn-primary" type="submit" id ="boton${habitacion.id}">Reservar</button>
-        </div>
         
-    </div>
+            <div class="card margin bg-dark border border-white" style="width: 18rem; id= habitacion${habitacion.id}">
+                <div class="card-body">
+                    <h3 class="card-title">Habitacion ${habitacion.id}</h3>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item bg-dark colorTextCard">${habitacion.dormitorio} Cama/s  </li>
+                    <li class="list-group-item bg-dark colorTextCard">${habitacion.banio} Baño/s</li>
+                    <li class="list-group-item bg-dark colorTextCard">Cocina: ${habitacion.cocina}</li>
+                    <li class="list-group-item bg-dark colorTextCard">Living: ${habitacion.living}</li>
+                    <li class="list-group-item bg-dark colorTextCard">Pileta/Balcon: ${habitacion.plus}</li>
+                </ul>
+
+                <div class= "btn btn-dark" >
+                        <button class="btn btn-primary" type="submit" id ="boton${habitacion.id}">Reservar</button>
+                </div>
+                
+            </div>
+        
     `
     
     })
@@ -143,6 +188,7 @@ function errorCarga(){
             </div>
         </div>
         `
+    
 }
 
 
@@ -150,11 +196,13 @@ function datosFamlia(cantPer){
     
     formDatos.innerHTML = " "
 
-
-    if (cantPer == 2){
-        formDatos.innerHTML += `<span class="tituloDatosFamiliar">Datos de acompañante</span>`
-
-    }else{
+    if (cantPer < 2){
+        formDatos.innerHTML = " "
+    }
+    else if (cantPer == 2){
+        formDatos.innerHTML += `<span class="tituloDatosFamiliar">Datos de acompañante</span>`}
+    
+    else{
         formDatos.innerHTML += `<span class="tituloDatosFamiliar">Datos de acompañantes</span>`
 
     }
@@ -222,29 +270,12 @@ function datosFamlia(cantPer){
         }).showToast();
         console.log(datosAcompaniante)
     })
+
+    
 }
     
-    
-    
-
-
-
-
-
-
-
-
-
-    
-    if (cantPer == 1){
-        formDatos.innerHTML = " "
-    }
 
 }
-
-
-
-
 
 cantPerUs.addEventListener(`change`, () =>{
 
@@ -270,7 +301,8 @@ cantPerUs.addEventListener(`change`, () =>{
             
             habitacionElegida.push(habitacion)
             localStorage.setItem("habitacionElegida", JSON.stringify(habitacionElegida))
-            
+            datos.push(habitacion)
+            console.log(datos)
             })
         })
 
@@ -284,10 +316,114 @@ habitaciones.forEach(habitacion =>{
     document.getElementById(`boton${habitacion.id}`).addEventListener("click", ()=>{
         habitacionElegida.push(habitacion)
         localStorage.setItem("habitacionElegida", JSON.stringify(habitacionElegida))
+        datos.push(habitacion)
+        console.log(datos)
+        
     })
 
 })
 
+/*<img src="..." class="card-img-top" alt="...">*/ 
+
+function adicionalCliente(cantP,cost,cliente){
+    /* NO TOCAR */
+    if(cantP <= 0 || cantP >5){
+        paquetesCliente.innerHTML =''
+    }
+    
+    else{
+        paquetesCliente.innerHTML =`
+            <div class="separador d-flex justify-content-center">
+                <div class="separador card margin bg-dark border border-white " style="width: 18rem;">
+                    
+                    <div class="card-body">
+                        <h5 class="card-title">All inclusive</h5>
+                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item bg-dark colorTextCard">Incluye desayuno, almuerzo y cena</li>
+                        <li class="list-group-item bg-dark colorTextCard">Tours por córdoba</li>
+                        <li class="list-group-item bg-dark colorTextCard">Pase libre a eventos del hotel</li>
+                    </ul>
+                    
+                    <div class= "btn btn-dark" >
+                        <button class="btn btn-primary" type="submit" id ="adicionalSi">Deseo agregar paquete</button>
+                    </div>
+                    <div class= "btn btn-dark" >
+                        <button class="btn btn-primary" type="submit" id ="adicionalNo">No, gracias</button>
+                    </div>
+                    <div class="d-flex justify-content-center">
+                        <span>Costo adicional $ ${cantP*cost}</span>
+                    </div>
+                </div>
+            </div>
+        
+        `
+    }
+    
+}
+
+
+
+
+/* Sacaste como argumento a cliente */
+function adicionalesCliente(cantP,cliente,adic){
+        paquetesCliente.innerHTML = ''
+        adic.forEach(adi =>{
+            paquetesCliente.innerHTML+=`
+            
+            <div class="separador card margin bg-dark border border-white " style="width: 18rem;">
+                
+                <div class="card-body">
+                    <h5 class="card-title">${adi.tit}</h5>
+                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item bg-dark colorTextCard">${adi.item1}</li>
+                    <li class="list-group-item bg-dark colorTextCard">${adi.item2}</li>
+                    <li class="list-group-item bg-dark colorTextCard">${adi.item3}</li>
+                </ul>
+                
+                <div class= "btn btn-dark" >
+                    <button class="btn btn-primary" type="submit" id ="${adi.id}Si">Deseo agregar paquete</button>
+                </div>
+                <div class= "btn btn-dark" >
+                    <button class="btn btn-primary" type="submit" id ="${adi.id}No">No, gracias</button>
+                </div>
+                <div class="d-flex justify-content-center">
+                    <span>Costo adicional $ ${cantP*600}</span>
+                </div>
+            </div>
+        
+            
+            `
+        })
+
+        let boton1Si = document.getElementById(`1Si`)
+        let boton2Si = document.getElementById(`2Si`)
+        let boton3Si = document.getElementById(`3Si`)
+
+        let boton1No = document.getElementById(`1No`)
+        let boton2No = document.getElementById(`2No`)
+        let boton3No = document.getElementById(`3No`)
+
+        boton1Si.addEventListener('click', ()=>{})
+        boton2Si.addEventListener('click', ()=>{})
+        boton3Si.addEventListener('click', ()=>{})
+
+        boton1No.addEventListener('click', ()=>{})
+        boton2No.addEventListener('click', ()=>{})
+        boton3No.addEventListener('click', ()=>{})
+
+
+
+
+
+
+
+
+        
+}
 
 
 
@@ -314,18 +450,36 @@ habitaciones.forEach(habitacion =>{
 
 
 
+fetch("clima.json")
+.then(response => response.json())
+.then((data)=>{
+    data.forEach((element) =>{
+        datosJson.innerHTML = `
+        <span>${element.temp}°</span>
+        <span class="espacioClima">${element.desc}</span>
+        <img src="${element.img}" class="imgNube espacioClima">
+        <span class="espacioClima">${element.ubi}</span>
+        
+        `
+    })
+})
 
 
-
-
-
-
-
-
-
-
-
-
+setInterval(()=>{
+    fetch("clima.json")
+    .then(response => response.json())
+    .then((data)=>{
+        data.forEach((element) =>{
+            datosJson.innerHTML = `
+            <span>${element.temp}°</span>
+            <span class="espacioClima">${element.desc}</span>
+            <img src="${element.img}" class="imgNube espacioClima">
+            <span class="espacioClima">${element.ubi}</span>
+            
+            `
+        })
+    })
+}, 3000)
 
 
 
@@ -333,6 +487,162 @@ habitaciones.forEach(habitacion =>{
 
 
 //////////////////////////////////////////////////////////////// Elementos para uso futuro
+    /*for(let i =1; i <= adic.length ; i++){
+            let botonSi = document.getElementById(`${i}Si`)
+
+            botonSi.addEventListener('click', ()=>{
+                cliente = {
+                    ...cliente,
+                    adicionalComida: true
+                }
+                datos.push(cliente)
+                localStorage.setItem("Cliente", JSON.stringify(datos))
+                
+                console.log(cliente)
+            })
+        }*/
+
+        /*let botonComidaSi = document.getElementById('comidaSi')
+
+        let botonTourSi = document.getElementById('tourSi')
+
+        let botonEventoSi = document.getElementById('eventoSi')*/
+
+
+
+    /*botonComidaSi.addEventListener('click', ()=>{
+        cliente = {
+            ...cliente,
+            adicionalComida: true
+        }
+        datos.push(cliente)
+        localStorage.setItem("Cliente", JSON.stringify(datos))
+        
+        console.log(cliente)
+    })
+
+    
+
+    botonTourSi.addEventListener('click', ()=>{
+        cliente = {
+            ...cliente,
+            adicionalTour: true
+        }
+        datos.push(cliente)
+        localStorage.setItem("Cliente", JSON.stringify(datos))
+        
+        console.log(cliente)
+    })
+
+    
+
+    botonEventoSi.addEventListener('click', ()=>{
+        cliente = {
+            ...cliente,
+            adicionalEvento: true
+        }
+        datos.push(cliente)
+        localStorage.setItem("Cliente", JSON.stringify(datos))
+        
+        console.log(cliente)
+    })*/
+
+
+/*paquetesCliente.innerHTML=`
+        <div class="separador d-flex justify-content-center">
+                <div class="separador card margin bg-dark border border-white " style="width: 18rem;">
+                    
+                    <div class="card-body">
+                        <h5 class="card-title">Incluir Desayuno, Almuerzo y Cena</h5>
+                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item bg-dark colorTextCard">Desayuno</li>
+                        <li class="list-group-item bg-dark colorTextCard">Almuerzo</li>
+                        <li class="list-group-item bg-dark colorTextCard">Cena</li>
+                    </ul>
+                    
+                    <div class= "btn btn-dark" >
+                        <button class="btn btn-primary" type="submit" id ="comidaSi">Deseo agregar paquete</button>
+                    </div>
+                    <div class= "btn btn-dark" >
+                        <button class="btn btn-primary" type="submit" id ="comidaNo">No, gracias</button>
+                    </div>
+                    <div class="d-flex justify-content-center">
+                        <span>Costo adicional $ ${cantP*600}</span>
+                    </div>
+                </div>
+        </div>
+
+        <div class="separador d-flex justify-content-center">
+                <div class="separador card margin bg-dark border border-white " style="width: 18rem;">
+                    
+                    <div class="card-body">
+                        <h5 class="card-title">Tours por Córdoba</h5>
+                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item bg-dark colorTextCard">Salida a Carlos Paz</li>
+                        <li class="list-group-item bg-dark colorTextCard">Trekking Cerro Uritorco</li>
+                        <li class="list-group-item bg-dark colorTextCard">Recorrido Mirador Icho Cruz</li>
+                    </ul>
+                    
+                    <div class= "btn btn-dark" >
+                        <button class="btn btn-primary" type="submit" id ="tourSi">Deseo agregar paquete</button>
+                    </div>
+                    <div class= "btn btn-dark" >
+                        <button class="btn btn-primary" type="submit" id ="tourNo">No, gracias</button>
+                    </div>
+                    <div class="d-flex justify-content-center">
+                        <span>Costo adicional $ ${cantP*700}</span>
+                    </div>
+                </div>
+        </div>
+
+        <div class="separador d-flex justify-content-center">
+                <div class="separador card margin bg-dark border border-white " style="width: 18rem;">
+                    
+                    <div class="card-body">
+                        <h5 class="card-title">Eventos de Hotel</h5>
+                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item bg-dark colorTextCard">Juegos para grandes y chicos</li>
+                        <li class="list-group-item bg-dark colorTextCard">Pase libre al salon de eventos</li>
+                        <li class="list-group-item bg-dark colorTextCard">Uso de parque interno del hotel</li>
+                    </ul>
+                    
+                    <div class= "btn btn-dark" >
+                        <button class="btn btn-primary" type="submit" id ="eventoSi">Deseo agregar paquete</button>
+                    </div>
+                    <div class= "btn btn-dark" >
+                        <button class="btn btn-primary" type="submit" id ="eventoNo">No, gracias</button>
+                    </div>
+                    <div class="d-flex justify-content-center">
+                        <span>Costo adicional $ ${cantP*800}</span>
+                    </div>
+                </div>
+        </div>
+
+
+        `*/
+
+
+/*fetch("https://api.openweathermap.org/data/3.0/onecall?lat=-64.1855922931011&lon=-31.41103239109793&exclude=current,minutely,hourly,alerts&appid=dc68c447dad3dc59fc52561a7bf67058&units=standard")
+        .then(response => response.json())
+        .then(response => console.log(response))
+        .then(({}))
+        .catch(err => console.error(err));*/
+
+/*setInterval(()=>{
+    fetch('https://weatherbit-v1-mashape.p.rapidapi.com/current?lon=-64.18524897037507&lat=-31.41114226939232&lang=es', options)
+        .then(response => response.json())
+        .then(response => console.log(response))
+        .then(({}))
+        .catch(err => console.error(err));
+}, )
+
+https://api.openweathermap.org/data/3.0/onecall?lat=-64.1855922931011&lon=-31.41103239109793&exclude=current,minutely,hourly,alerts&appid=dc68c447dad3dc59fc52561a7bf67058&units=standard*/
 
 /*document.getElementById(`botonHab`).addEventListener("click", ()=>{
     let habParse = JSON.parse(localStorage.getItem("habitacionElegida")) 
