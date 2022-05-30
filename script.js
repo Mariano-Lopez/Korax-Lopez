@@ -16,6 +16,8 @@ let datosJson = document.getElementById('datosJson')
 
 let paquetesCliente = document.getElementById('paquetesCliente')
 
+let ticket = []
+
 
 
 class Habitacion{
@@ -51,26 +53,30 @@ const hab4Op2Ob = new Habitacion(8, "4", "2", "Si", "Si", "Balcón")
 const habitaciones = [hab1Op1Ob, hab1Op2Ob, hab2Op1Ob, hab2Op2Ob, hab3Op1Ob, hab3Op2Ob, hab4Op1Ob, hab4Op2Ob]
 
 class Adicional {
-    constructor(id, tit, item1, item2, item3){
+    constructor(id, tit, item1, item2, item3,precio, disp){
         this.id = id
         this.tit = tit
         this.item1 = item1
         this.item2 = item2
         this.item3 = item3
+        this.precio = precio
+        this.disp = disp
     }
 }
 
-const adicComida= new Adicional(1, "Incluir desayuno, merienda y cena", "Desayuno", "Merienda", "Cena")
+const adicComida= new Adicional(1, "Incluir desayuno, merienda y cena", "Desayuno", "Merienda", "Cena", 500, true)
 
-const adicTour = new Adicional(2,"Tours por cordoba","Salida a Carlos Paz", "Trekking Cerro Uritorco", "Recorrido mirador Icho Cruz")
+const adicTour = new Adicional(2,"Tours por cordoba","Salida a Carlos Paz", "Trekking Cerro Uritorco", "Recorrido mirador Icho Cruz", 600, true)
 
-const adicEvento = new Adicional(3, "Eventos del hotel", "Juegos para grandes y chicos", "Pase libre al salon de eventos", "Uso parque interno del hotel" )
+const adicEvento = new Adicional(3, "Eventos del hotel", "Juegos para grandes y chicos", "Pase libre al salon de eventos", "Uso parque interno del hotel", 700, true )
 
 const adicionales = [adicComida, adicTour, adicEvento]
 
 
 
 mostrarHabs(habitaciones)
+
+
 
 let habitacionElegida = JSON.parse(localStorage.getItem("habitacionElegida")) ?? [] 
 
@@ -98,39 +104,22 @@ formUsuario.addEventListener(`submit`, (e)=>{
 
     console.log(cliente)
 
-    if(1 >= cantPer || cantPer < 5){
+    if(1 > cantPer || cantPer < 5){
         datosFamlia(cantPer)
         adicionalCliente(cantPer,costoPorDia, cliente)
         
     }
     else{
         errorCarga()
-        formDatos.innerHTML = ''
-        paquetesCliente.innerHTML = ''
-    }
-    
-
-    /* Podrias poner esto en una funcion*/
-    let botonAdicionalSi = document.getElementById('adicionalSi')
-
-    botonAdicionalSi.addEventListener('click', ()=>{
-        cliente = {
-            ...cliente,
-            adicional: "All inclusive"
-        }
-        datos.push(cliente)
-        localStorage.setItem("Cliente", JSON.stringify(datos))
         
-        console.log(cliente)
-    })
+    }
     
     let botonAdicionalNo = document.getElementById('adicionalNo')
 
 
     botonAdicionalNo.addEventListener('click', ()=>{
-        adicionalesCliente(cantPer,cliente,adicionales)
+        adicionalesCliente(cantPer)
     })
-
     
     //////////////////////////////////////////////////////
     
@@ -188,7 +177,8 @@ function errorCarga(){
             </div>
         </div>
         `
-    
+    formDatos.innerHTML = ''
+    paquetesCliente.innerHTML = ' '
 }
 
 
@@ -325,109 +315,126 @@ habitaciones.forEach(habitacion =>{
 
 /*<img src="..." class="card-img-top" alt="...">*/ 
 
-function adicionalCliente(cantP,cost,cliente){
-    /* NO TOCAR */
-    if(cantP <= 0 || cantP >5){
-        paquetesCliente.innerHTML =''
-    }
-    
-    else{
-        paquetesCliente.innerHTML =`
-            <div class="separador d-flex justify-content-center">
-                <div class="separador card margin bg-dark border border-white " style="width: 18rem;">
-                    
-                    <div class="card-body">
-                        <h5 class="card-title">All inclusive</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                    </div>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item bg-dark colorTextCard">Incluye desayuno, almuerzo y cena</li>
-                        <li class="list-group-item bg-dark colorTextCard">Tours por córdoba</li>
-                        <li class="list-group-item bg-dark colorTextCard">Pase libre a eventos del hotel</li>
-                    </ul>
-                    
-                    <div class= "btn btn-dark" >
-                        <button class="btn btn-primary" type="submit" id ="adicionalSi">Deseo agregar paquete</button>
-                    </div>
-                    <div class= "btn btn-dark" >
-                        <button class="btn btn-primary" type="submit" id ="adicionalNo">No, gracias</button>
-                    </div>
-                    <div class="d-flex justify-content-center">
-                        <span>Costo adicional $ ${cantP*cost}</span>
-                    </div>
-                </div>
-            </div>
-        
-        `
-    }
-    
-}
+function adicionalCliente(cantP,cost){
 
-
-
-
-/* Sacaste como argumento a cliente */
-function adicionalesCliente(cantP,cliente,adic){
-        paquetesCliente.innerHTML = ''
-        adic.forEach(adi =>{
-            paquetesCliente.innerHTML+=`
-            
+    paquetesCliente.innerHTML =`
+        <div class="separador d-flex justify-content-center">
             <div class="separador card margin bg-dark border border-white " style="width: 18rem;">
                 
                 <div class="card-body">
-                    <h5 class="card-title">${adi.tit}</h5>
+                    <h5 class="card-title">All inclusive</h5>
                     <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
                 </div>
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item bg-dark colorTextCard">${adi.item1}</li>
-                    <li class="list-group-item bg-dark colorTextCard">${adi.item2}</li>
-                    <li class="list-group-item bg-dark colorTextCard">${adi.item3}</li>
+                    <li class="list-group-item bg-dark colorTextCard">Incluye desayuno, almuerzo y cena</li>
+                    <li class="list-group-item bg-dark colorTextCard">Tours por córdoba</li>
+                    <li class="list-group-item bg-dark colorTextCard">Pase libre a eventos del hotel</li>
                 </ul>
                 
                 <div class= "btn btn-dark" >
-                    <button class="btn btn-primary" type="submit" id ="${adi.id}Si">Deseo agregar paquete</button>
+                    <button class="btn btn-primary" type="submit" id ="adicionalSi">Deseo agregar paquete</button>
                 </div>
                 <div class= "btn btn-dark" >
-                    <button class="btn btn-primary" type="submit" id ="${adi.id}No">No, gracias</button>
+                    <button class="btn btn-primary" type="submit" id ="adicionalNo">No, gracias</button>
                 </div>
                 <div class="d-flex justify-content-center">
-                    <span>Costo adicional $ ${cantP*600}</span>
+                    <span>Costo adicional $ ${cantP*cost}</span>
                 </div>
             </div>
+        </div>
+    
+    `
+    }
+    
+
+
+/* Sacaste como argumento a cliente */
+
+function adicionalesCliente(cantP){
         
+        const tarjetasAdic = adicionales.map(element=>{
+            const {id, tit, item1, item2, item3,precio, disp} = element;
+            if(disp == false){
+                return `<div class="separador card margin bg-dark border border-white " style="width: 18rem;">
             
-            `
+            <div class="card-body">
+                <h5 class="card-title">${tit}</h5>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item bg-dark colorTextCard">${item1}</li>
+                <li class="list-group-item bg-dark colorTextCard">${item2}</li>
+                <li class="list-group-item bg-dark colorTextCard">${item3}</li>
+            </ul>
+            
+            <div class= "btn btn-dark" >
+                <button disabled="true" class="btn btn-light" type="submit" id ="Si${id}">Paquete Agregado</button>
+            </div>
+        </div>`
+            }
+            else{
+                return `<div class="separador card margin bg-dark border border-white " style="width: 18rem;">
+            
+            <div class="card-body">
+                <h5 class="card-title">${tit}</h5>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item bg-dark colorTextCard">${item1}</li>
+                <li class="list-group-item bg-dark colorTextCard">${item2}</li>
+                <li class="list-group-item bg-dark colorTextCard">${item3}</li>
+            </ul>
+            
+            <div class= "btn btn-dark" >
+                <button class="btn btn-primary" type="submit" id ="Si${id}">Deseo agregar paquete</button>
+            </div>
+            <div class="d-flex justify-content-center">
+                <span>Costo adicional $ ${cantP*precio}</span>
+            </div>
+        </div>`
+            }
+            
         })
 
-        let boton1Si = document.getElementById(`1Si`)
-        let boton2Si = document.getElementById(`2Si`)
-        let boton3Si = document.getElementById(`3Si`)
+        paquetesCliente.innerHTML= tarjetasAdic.join("")
 
-        let boton1No = document.getElementById(`1No`)
-        let boton2No = document.getElementById(`2No`)
-        let boton3No = document.getElementById(`3No`)
+        botonadicionales()
 
-        boton1Si.addEventListener('click', ()=>{})
-        boton2Si.addEventListener('click', ()=>{})
-        boton3Si.addEventListener('click', ()=>{})
-
-        boton1No.addEventListener('click', ()=>{})
-        boton2No.addEventListener('click', ()=>{})
-        boton3No.addEventListener('click', ()=>{})
-
-
-
-
-
-
-
-
-        
 }
 
+function botonadicionales(){
+    // El id no puede empezar con un numero.
+    adicionales.forEach((adicionales)=>{
+        document.querySelector(`#Si${adicionales.id}`).addEventListener('click', ()=>{
+            ticketCliente(adicionales)
+            
+        })
+    })
 
+}
 
+function ticketCliente(adicionales){
+    
+    const sumarAdic = ticket.some((element)=>element.id === adicionales.id)
+    console.log(sumarAdic)
 
+    if(sumarAdic){
+        
+        ticket.map(element=>{
+            if(element.id === adicionales.id ){
+                element.disp = false
+                //Agregue esta linea
+                adicionalesCliente(adicionales)
+                return element
+            }
+        })
+    }
+    else{
+        ticket.push(adicionales)
+        
+    }
+    
+}
 
 
 
