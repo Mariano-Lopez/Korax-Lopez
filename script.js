@@ -1,5 +1,7 @@
-// Entrega Eventos Simulador de reserva de hotel Korax (Se esta evaluando nombre final)
+// Simulador de Rserva de Hotel Korax
 
+
+//Definicion de elementos y arrys
 let costoPorDia = 2000
 
 let tablaHab = document.getElementById("tablaHab")
@@ -26,6 +28,7 @@ let datosAcompaniante = []
 
 let ticket = []
 
+// Un class para guardar un array con las habitaciones
 class Habitacion{
 
     constructor(id, dormitorio, banio, cocina, living, plus){
@@ -58,6 +61,7 @@ const hab4Op2Ob = new Habitacion(8, "4", "2", "Si", "Si", "Balcón")
 
 const habitaciones = [hab1Op1Ob, hab1Op2Ob, hab2Op1Ob, hab2Op2Ob, hab3Op1Ob, hab3Op2Ob, hab4Op1Ob, hab4Op2Ob]
 
+// Adicionales
 class Adicional {
     constructor(id, tit, item1, item2, item3,precio, disp){
         this.id = id
@@ -80,14 +84,16 @@ const adicionales = [adicComida, adicTour, adicEvento]
 
 const adicionalAll = {id: 0, tit: "All inclusive", item1: "Incluye dasayuno merienda y cena", item2: "Tours por Córdoba", item3: "Pase libre a eventos del hotel", precio: 1000}
 
+
+// Muestro en el html todas las habitaciones
 mostrarHabs(habitaciones)
 
 
-
+// Uso del localSotrage
 let habitacionElegida = JSON.parse(localStorage.getItem("habitacionElegida")) ?? [] 
 
 
-
+//Formulario principal
 formUsuario.addEventListener(`submit`, (e)=>{
     e.preventDefault()
     let nombre = document.getElementById(`nombreUs`).value
@@ -107,7 +113,7 @@ formUsuario.addEventListener(`submit`, (e)=>{
     
     let cliente = {usuario: usuario, fechaDeLlegada: fechaDeLlegada, fechaDeIda: fechaDeIda, diasEstadia: diasEstadia, cantPer: cantPer}
 
-
+    //En caso de que ingrese un valor incorrecto se llamara a una funcion u otra
     if(1 <= cantPer && cantPer <= 4){
         adicionalCliente(cantPer,adicionalAll, habitacionE)
         datosFamlia(cantPer)
@@ -131,18 +137,10 @@ formUsuario.addEventListener(`submit`, (e)=>{
         
         
     }
-
-    
-    
-    //////////////////////////////////////////////////////
-    
-    
-    
-
 })
 
 
-
+// Formulario con los datos de los acompañantes
 formDatos.addEventListener('click', (e) =>{
     e.preventDefault()
 })
@@ -194,7 +192,7 @@ habitaciones.forEach(habitacion =>{
 
 
 function mostrarHabs(habitaciones){
-    /*NO TOCAR TAMPOCO */
+    
     tablaHab.innerHTML+='<h2 class=" text-center">Habitaciones recomendadas</h2> '
 
     habitaciones.forEach(habitacion => {
@@ -323,12 +321,6 @@ function datosFamlia(cantPer){
 
 }
 
-
-
-
-
-/*<img src="..." class="card-img-top" alt="...">*/ 
-
 function adicionalCliente(cantP, adicionalAll){
 
     paquetesCliente.innerHTML =`
@@ -360,18 +352,13 @@ function adicionalCliente(cantP, adicionalAll){
     `
     let adicionalSi = document.getElementById('adicionalSi')
     
-
+    //El event hace que el cliente solo pueda agregar un solo paquete y no mas
     adicionalSi.addEventListener('click', ()=>{
         event.target.disabled=true
         ticket.push(adicionalAll)
     })
 
-    }
-    
-
-
-/* Sacaste como argumento a cliente */
-
+}
 function adicionalesCliente(cantP){
         
 
@@ -426,7 +413,7 @@ function adicionalesCliente(cantP){
 }
 
 function botonadicionales(){
-    // El id no puede empezar con un numero.
+    
     adicionales.forEach((adicionales)=>{
         document.querySelector(`#Si${adicionales.id}`).addEventListener('click', ()=>{
             event.target.disabled=true
@@ -484,10 +471,6 @@ function verReserva(cliente, habitacionE, ticket, cantPer, diasEstadia){
     finProyecto()
 }
 
-
-
-
-
 function adicionalesFinal(){
     datosClienteFinal.innerHTML+= `<h5 class="titTicket">Adicionales elegidos/s</h5>
                                     `
@@ -502,10 +485,6 @@ function adicionalesFinal(){
     datosClienteFinal.innerHTML+= adicF.join("")
 }
 
-
-
-
-
 function acompUsuario(){
     datosClienteFinal.innerHTML+= `<h5 class="titTicket">Datos de acompañante/s</h5>`
     const acomp = datosAcompaniante.map(element=>{
@@ -518,8 +497,8 @@ function acompUsuario(){
     datosClienteFinal.innerHTML+= acomp.join("")
 }
 
-
 function finProyecto(){
+    // Uso de librerias
     terminarJs.addEventListener('click', ()=>{
         
         const swalWithBootstrapButtons = Swal.mixin({
@@ -540,6 +519,7 @@ function finProyecto(){
             if (result.isConfirmed) {
                 swalWithBootstrapButtons.fire(
                     '¡Reserva realizada!',
+                    // Cuando el cliente carga todos los datos se reinicia la pagina en 3segs para simular el envio de datos
                     setInterval(()=>{location.reload()}, 3000)
             )
             } else if (
@@ -558,9 +538,7 @@ function finProyecto(){
 function totalRserva(costoPorDia,cantPer, diasEstadia){
     precioFinal = 0
     ticket.forEach((ticket =>{
-        precioFinal +=ticket.precio
-        //console.log(precioFinal)
-    }))
+        precioFinal +=ticket.precio    }))
 
     return datosClienteFinal.innerHTML+=`
     <div>
@@ -570,19 +548,8 @@ function totalRserva(costoPorDia,cantPer, diasEstadia){
     
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+// Uso del fetch 
+//Tuve problemas para usar el api del clima porque nunca me habilitaron la key para usarla, asi que aplico json
 fetch("clima.json")
 .then(response => response.json())
 .then((data)=>{
