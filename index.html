@@ -24,9 +24,37 @@
         <nav>
             
         </nav>
-        <h1 class="text-center">Bienvenido a Hotel Korax</h1>
+        <div class=" contenedor d-flex justify-content-center align-items-center">
+            <div class=" texto-encima centrado d-flex row justify-content-center ">
+                <h1 class="">Bienvenido a Hotel Korax</h1>
+                <span class="d-flex justify-content-center slogan">Tú segundo hogar</span>
+            </div>
+            
+            <div>
+                <img src="./img/imgPages/Hotel.jpg" alt="" class="imgHotel">
+            </div>
+
+            <div class="estiloCuadroInfo">
+                <h2>Te ofrecemos los mejores servicios</h2>
+                <ul>
+                    <li>Room Service 24h</li>
+                    <li>Gran variedad de platos</li>
+                    <li>Eventos todos los dias para que no sea solamente un alojamiento</li>
+                    <li>Parque interno abierto 24h</li>
+                    <li>Gimnasio completo con los mejores profesores</li>
+                    <li>Atencion medica</li>
+                    <li>Wifi totalmente gratuito con cobertura 100% en el hotel</li>
+                    <li>La mejor atencion para que no sientas que dejaste tu hogar</li>
+                </ul>
+            </div>
+        </div>
+
+
+        
     </header>
     <main class="container">
+        <h3>¡Hacé tu reserva!</h3>
+        <p class="estParrafo">A continuación te pedimos tus datos (en caso de ir solo colocar cantidad de personas 1),te vamos a mostrar las habitaciones que tenemos para ofrecerte, datos de tus acompañantes y que paquete queres agregar a tu reserva.</p>
         <form class="row g-3" no validate id="divForm">
             <div class="col-md-4">
                 <label for="validationCustom01" class="form-label">Nombre</label>
@@ -39,12 +67,12 @@
             
             <div class="col-md-4">
                 <label for="validationCustom02" class="form-label">Fecha de llegada</label>
-                <input type="text" class="form-control" id="fechLlUs">
+                <input type="date" class="form-control" id="fechLlUs">
             </div>
 
             <div class="col-md-4">
                 <label for="validationCustom02" class="form-label">Fecha de Ida</label>
-                <input type="text" class="form-control" id="fechIdaUs">
+                <input type="date" class="form-control" id="fechIdaUs">
             </div>
 
             <div class="col-md-4">
@@ -54,7 +82,7 @@
 
             <div class="col-md-4">
                 <label for="validationCustom02" class="form-label">Cantidad de personas</label>
-                <input type="text" class="form-control" id="cantPerUs">
+                <input type="text" class="form-control" id="cantPerUs" required>
             </div>
             
             <div class="d-flex justify-content-center">
@@ -77,15 +105,68 @@
             <div id="paquetesCliente" class="d-flex justify-content-center"></div>
         </section>
 
-
+        
+        <div class="margin d-flex justify-content-center" id="btnDis">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ModalKorax" id="btnReserva">Chequear datos de mi reserva</button>
+        </div>
+        
+        
+        <!-- Modal -->
+        <div class="modal fade" id="ModalKorax" tabindex="-1" aria-labelledby="ModalLabelKorax" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content border border-white bg-dark">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="ModalLabelKorax">Carga de datos para reserva</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="datosClienteFinal">
+                        
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-primary" id="terminarJs" data-bs-dismiss="modal">Hacer mi reserva!</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </main>
     <footer>
-
+        <div class="d-flex justify-content-around align-items-center marginFooter">
+            
+            <div class="d-flex row">
+                <div class="d-flex column">
+                    <div class="marginImg">
+                        <div class="d-flex justify-content-center">
+                            <img src="./img/Logos/Logo-IG.png" alt="" class="imgLogo">
+                        </div>
+                        
+                        <span>Instagram</span>
+                    </div>
+                
+                
+                    <div class="marginImg">
+                        <div class="d-flex justify-content-center">
+                            <img src="./img/Logos/Logo-wp.png" alt="" class="imgLogoW">
+                        </div>
+                        
+                        <span>Whatsapp</span>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <span class="hechoPor">Hecho por Mariano Lopez 2022</span>
+            </div>
+        </div>
+        
     </footer>
     
     <!-- link toastify js -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <!-- link js bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <!-- link js sweetAlert -->
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="script.js"></script>
 </body>
 </html>

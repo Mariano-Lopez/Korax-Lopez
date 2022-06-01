@@ -8,17 +8,23 @@ let formUsuario = document.getElementById("divForm")
 
 let formDatos = document.getElementById('formDatos')
 
-let datos = []
-
-let datosAcompaniante = []
+let btnFiltrar = document.getElementById('btnFiltrar')
 
 let datosJson = document.getElementById('datosJson')
 
 let paquetesCliente = document.getElementById('paquetesCliente')
 
+let datosClienteFinal = document.getElementById('datosClienteFinal')
+
+let btnDis = document.getElementById('btnDis')
+
+let terminarJs = document.getElementById('terminarJs')
+
+let habitacionE = []
+
+let datosAcompaniante = []
+
 let ticket = []
-
-
 
 class Habitacion{
 
@@ -72,7 +78,7 @@ const adicEvento = new Adicional(3, "Eventos del hotel", "Juegos para grandes y 
 
 const adicionales = [adicComida, adicTour, adicEvento]
 
-
+const adicionalAll = {id: 0, tit: "All inclusive", item1: "Incluye dasayuno merienda y cena", item2: "Tours por Córdoba", item3: "Pase libre a eventos del hotel", precio: 1000}
 
 mostrarHabs(habitaciones)
 
@@ -98,31 +104,41 @@ formUsuario.addEventListener(`submit`, (e)=>{
 
     let cantPer = document.getElementById(`cantPerUs`).value
 
+    
     let cliente = {usuario: usuario, fechaDeLlegada: fechaDeLlegada, fechaDeIda: fechaDeIda, diasEstadia: diasEstadia, cantPer: cantPer}
 
-    
 
-    console.log(cliente)
-
-    if(1 > cantPer || cantPer < 5){
+    if(1 <= cantPer && cantPer <= 4){
+        adicionalCliente(cantPer,adicionalAll, habitacionE)
         datosFamlia(cantPer)
-        adicionalCliente(cantPer,costoPorDia, cliente)
+
+        let botonAdicionalNo = document.getElementById('adicionalNo')
+
+
+        botonAdicionalNo.addEventListener('click', ()=>{
+            adicionalesCliente(cantPer)
+        })
+
+        let btnRserva = document.getElementById('btnReserva')
+
+        btnRserva.addEventListener('click', ()=>{
+            verReserva(cliente, habitacionE, ticket, cantPer, diasEstadia)
+        })
         
     }
     else{
         errorCarga()
         
+        
     }
+
     
-    let botonAdicionalNo = document.getElementById('adicionalNo')
-
-
-    botonAdicionalNo.addEventListener('click', ()=>{
-        adicionalesCliente(cantPer)
-    })
     
     //////////////////////////////////////////////////////
     
+    
+    
+
 })
 
 
@@ -131,10 +147,50 @@ formDatos.addEventListener('click', (e) =>{
     e.preventDefault()
 })
 
+cantPerUs.addEventListener(`change`, () =>{
+
+    let filtro = cantPerUs.value
+
+    let filtroHab = habitaciones.filter( habitacion => habitacion.dormitorio.includes(filtro))
+
+    tablaHab.innerHTML = ' '
+
+    
+    if ( 1 <= filtro && filtro <= 4){
+        mostrarHabs(filtroHab)
+        
+        }
+    
+    else{
+        errorCarga()
+    }
+
+    // En caso de que elija habitacion con filtro
+    filtroHab.forEach(habitacion =>{
+        document.getElementById(`boton${habitacion.id}`).addEventListener("click", ()=>{
+            event.target.disabled=true
+            habitacionE = habitacion
+            
+            localStorage.setItem("Habitacion", JSON.stringify(habitacionE))
+            
+            })
+        })
 
 
+    
 
+}) 
 
+// En caso de que elija habitacion sin filtro
+habitaciones.forEach(habitacion =>{
+    document.getElementById(`boton${habitacion.id}`).addEventListener("click", ()=>{
+            event.target.disabled=true
+            habitacionE = habitacion
+            localStorage.setItem("Habitacion", JSON.stringify(habitacionE))
+            console.log(habitacionE)
+            })
+
+})
 
 
 function mostrarHabs(habitaciones){
@@ -146,7 +202,7 @@ function mostrarHabs(habitaciones){
         
             <div class="card margin bg-dark border border-white" style="width: 18rem; id= habitacion${habitacion.id}">
                 <div class="card-body">
-                    <h3 class="card-title">Habitacion ${habitacion.id}</h3>
+                    <h4 class="card-title">Habitacion ${habitacion.id}</h4>
                 </div>
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item bg-dark colorTextCard">${habitacion.dormitorio} Cama/s  </li>
@@ -168,12 +224,11 @@ function mostrarHabs(habitaciones){
 }
 
 
-
 function errorCarga(){
     tablaHab.innerHTML = `
         <div class="card margin bg-dark colorTextCard" style="width: 40rem;">
             <div class="card-body">
-                <h3 class="card-title">No disponemos habitacion para esa cantidad de personas (valor incorrecto)</h3>
+                <h3 class="card-title">Valor ingresado incorrecto, porfavor ingreselo nuevamente</h3>
             </div>
         </div>
         `
@@ -231,7 +286,7 @@ function datosFamlia(cantPer){
     for (let i=1; i<cantPer; i++){
         btnCarga = document.getElementById(`btnCarga${i}`)
         
-    btnCarga.addEventListener(`click`, ()=>{
+        btnCarga.addEventListener(`click`, ()=>{
 
         let idFam = i 
 
@@ -259,6 +314,7 @@ function datosFamlia(cantPer){
             onClick: function(){}
         }).showToast();
         console.log(datosAcompaniante)
+        
     })
 
     
@@ -267,62 +323,20 @@ function datosFamlia(cantPer){
 
 }
 
-cantPerUs.addEventListener(`change`, () =>{
-
-    let filtro = cantPerUs.value
-
-    let filtroHab = habitaciones.filter( habitacion => habitacion.dormitorio.includes(filtro))
-
-    tablaHab.innerHTML = ' '
-
-    
-    if ( 1 <= filtro && filtro <= 4){
-        mostrarHabs(filtroHab)
-        
-        }
-    
-    else{
-        errorCarga()
-    }
-
-    // En caso de que elija habitacion con filtro
-    filtroHab.forEach(habitacion =>{
-        document.getElementById(`boton${habitacion.id}`).addEventListener("click", ()=>{
-            
-            habitacionElegida.push(habitacion)
-            localStorage.setItem("habitacionElegida", JSON.stringify(habitacionElegida))
-            datos.push(habitacion)
-            console.log(datos)
-            })
-        })
 
 
-    
 
-}) 
-
-// En caso de que elija habitacion sin filtro
-habitaciones.forEach(habitacion =>{
-    document.getElementById(`boton${habitacion.id}`).addEventListener("click", ()=>{
-        habitacionElegida.push(habitacion)
-        localStorage.setItem("habitacionElegida", JSON.stringify(habitacionElegida))
-        datos.push(habitacion)
-        console.log(datos)
-        
-    })
-
-})
 
 /*<img src="..." class="card-img-top" alt="...">*/ 
 
-function adicionalCliente(cantP,cost){
+function adicionalCliente(cantP, adicionalAll){
 
     paquetesCliente.innerHTML =`
         <div class="separador d-flex justify-content-center">
             <div class="separador card margin bg-dark border border-white " style="width: 18rem;">
                 
                 <div class="card-body">
-                    <h5 class="card-title">All inclusive</h5>
+                    <h4 class="card-title">All inclusive</h5>
                     <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
                 </div>
                 <ul class="list-group list-group-flush">
@@ -338,12 +352,20 @@ function adicionalCliente(cantP,cost){
                     <button class="btn btn-primary" type="submit" id ="adicionalNo">No, gracias</button>
                 </div>
                 <div class="d-flex justify-content-center">
-                    <span>Costo adicional $ ${cantP*cost}</span>
+                    <span>Costo adicional $ ${cantP*adicionalAll.precio}</span>
                 </div>
             </div>
         </div>
     
     `
+    let adicionalSi = document.getElementById('adicionalSi')
+    
+
+    adicionalSi.addEventListener('click', ()=>{
+        event.target.disabled=true
+        ticket.push(adicionalAll)
+    })
+
     }
     
 
@@ -352,13 +374,14 @@ function adicionalCliente(cantP,cost){
 
 function adicionalesCliente(cantP){
         
+
         const tarjetasAdic = adicionales.map(element=>{
             const {id, tit, item1, item2, item3,precio, disp} = element;
             if(disp == false){
                 return `<div class="separador card margin bg-dark border border-white " style="width: 18rem;">
             
             <div class="card-body">
-                <h5 class="card-title">${tit}</h5>
+                <h4 class="card-title">${tit}</h5>
                 <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
             </div>
             <ul class="list-group list-group-flush">
@@ -376,7 +399,7 @@ function adicionalesCliente(cantP){
                 return `<div class="separador card margin bg-dark border border-white " style="width: 18rem;">
             
             <div class="card-body">
-                <h5 class="card-title">${tit}</h5>
+                <h4 class="card-title">${tit}</h4>
                 <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
             </div>
             <ul class="list-group list-group-flush">
@@ -406,15 +429,14 @@ function botonadicionales(){
     // El id no puede empezar con un numero.
     adicionales.forEach((adicionales)=>{
         document.querySelector(`#Si${adicionales.id}`).addEventListener('click', ()=>{
+            event.target.disabled=true
             ticketCliente(adicionales)
-            
         })
     })
 
 }
 
 function ticketCliente(adicionales){
-    
     const sumarAdic = ticket.some((element)=>element.id === adicionales.id)
     console.log(sumarAdic)
 
@@ -423,26 +445,130 @@ function ticketCliente(adicionales){
         ticket.map(element=>{
             if(element.id === adicionales.id ){
                 element.disp = false
-                //Agregue esta linea
-                adicionalesCliente(adicionales)
                 return element
             }
         })
     }
     else{
         ticket.push(adicionales)
-        
     }
     
+}
+
+function verReserva(cliente, habitacionE, ticket, cantPer, diasEstadia){
+    datosClienteFinal.innerHTML =`
+    <h5 class="titTicket">Datos del titular</h5>
+    <div class="d-flex row">
+        <span>${cliente.usuario}</span>
+        <span>Fecha de llegada: ${cliente.fechaDeLlegada}</span>
+        <span>Fecha de ida: ${cliente.fechaDeIda}</span>
+        <span>Dias de estadia/s: ${cliente.diasEstadia}</span>
+        <span>Acompañantes: ${cliente.cantPer}</span>
+    </div>
+    <h5 class="titTicket">Habitacion Elegida</h5>
+    <div class="d-flex row">
+        <span>Dormitorio/s: ${habitacionE.dormitorio}</span>
+        <span>Baños: ${habitacionE.dormitorio}</span>
+        <span>Cocina: ${habitacionE.dormitorio}</span>
+        <span>Living: ${habitacionE.dormitorio}</span>
+        <span>Plus: ${habitacionE.dormitorio}</span>
+    </div>   
+    `
+    adicionalesFinal(ticket)
+    if(1 < cantPer && cantPer < 5){
+        acompUsuario(datosAcompaniante)
+    }
+
+    totalRserva(costoPorDia, cantPer, diasEstadia)
+
+    finProyecto()
 }
 
 
 
 
 
+function adicionalesFinal(){
+    datosClienteFinal.innerHTML+= `<h5 class="titTicket">Adicionales elegidos/s</h5>
+                                    `
+    const adicF = ticket.map(element=>{
+        const {id, tit, item1, item2, item3,precio, disp} = element
+        console.log(precio+precio)
+        return `<div>
+                <span>${tit}</span>
+                </div>`
+    })
+
+    datosClienteFinal.innerHTML+= adicF.join("")
+}
 
 
 
+
+
+function acompUsuario(){
+    datosClienteFinal.innerHTML+= `<h5 class="titTicket">Datos de acompañante/s</h5>`
+    const acomp = datosAcompaniante.map(element=>{
+        const {idFam: idFam, nomAcomp: nomAcom, apellAcom: apellAcom, edadAcom: edadAcom} = element
+        return `<div>
+                <span>${nomAcom} ${apellAcom} de ${edadAcom} años</span>
+                </div>`
+                
+    })
+    datosClienteFinal.innerHTML+= acomp.join("")
+}
+
+
+function finProyecto(){
+    terminarJs.addEventListener('click', ()=>{
+        
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                confirmButton: 'btn btn-success',
+                cancelButton: 'btn btn-danger'
+            },
+            buttonsStyling: false
+        })
+        swalWithBootstrapButtons.fire({
+            title: '¿Estas seguro de hacer tu reserva?',
+            icon: 'warning',
+            showCancelButton: true,
+            cancelButtonText: 'No, quiero seguir viendo mi reserva!',
+            confirmButtonText: 'Si, si lo estoy!',
+            reverseButtons: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                swalWithBootstrapButtons.fire(
+                    '¡Reserva realizada!',
+                    setInterval(()=>{location.reload()}, 3000)
+            )
+            } else if (
+            result.dismiss === Swal.DismissReason.cancel
+            ) {
+            swalWithBootstrapButtons.fire(
+                'Segui mirando tranquilo ;)'
+            )
+            }
+        })
+        
+    })
+    
+}
+
+function totalRserva(costoPorDia,cantPer, diasEstadia){
+    precioFinal = 0
+    ticket.forEach((ticket =>{
+        precioFinal +=ticket.precio
+        //console.log(precioFinal)
+    }))
+
+    return datosClienteFinal.innerHTML+=`
+    <div>
+        <span>Total Reserva $ ${(costoPorDia*cantPer*diasEstadia) + (precioFinal*cantPer)} </span>
+    </div>
+    `
+    
+}
 
 
 
@@ -487,312 +613,3 @@ setInterval(()=>{
         })
     })
 }, 3000)
-
-
-
-
-
-
-//////////////////////////////////////////////////////////////// Elementos para uso futuro
-    /*for(let i =1; i <= adic.length ; i++){
-            let botonSi = document.getElementById(`${i}Si`)
-
-            botonSi.addEventListener('click', ()=>{
-                cliente = {
-                    ...cliente,
-                    adicionalComida: true
-                }
-                datos.push(cliente)
-                localStorage.setItem("Cliente", JSON.stringify(datos))
-                
-                console.log(cliente)
-            })
-        }*/
-
-        /*let botonComidaSi = document.getElementById('comidaSi')
-
-        let botonTourSi = document.getElementById('tourSi')
-
-        let botonEventoSi = document.getElementById('eventoSi')*/
-
-
-
-    /*botonComidaSi.addEventListener('click', ()=>{
-        cliente = {
-            ...cliente,
-            adicionalComida: true
-        }
-        datos.push(cliente)
-        localStorage.setItem("Cliente", JSON.stringify(datos))
-        
-        console.log(cliente)
-    })
-
-    
-
-    botonTourSi.addEventListener('click', ()=>{
-        cliente = {
-            ...cliente,
-            adicionalTour: true
-        }
-        datos.push(cliente)
-        localStorage.setItem("Cliente", JSON.stringify(datos))
-        
-        console.log(cliente)
-    })
-
-    
-
-    botonEventoSi.addEventListener('click', ()=>{
-        cliente = {
-            ...cliente,
-            adicionalEvento: true
-        }
-        datos.push(cliente)
-        localStorage.setItem("Cliente", JSON.stringify(datos))
-        
-        console.log(cliente)
-    })*/
-
-
-/*paquetesCliente.innerHTML=`
-        <div class="separador d-flex justify-content-center">
-                <div class="separador card margin bg-dark border border-white " style="width: 18rem;">
-                    
-                    <div class="card-body">
-                        <h5 class="card-title">Incluir Desayuno, Almuerzo y Cena</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                    </div>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item bg-dark colorTextCard">Desayuno</li>
-                        <li class="list-group-item bg-dark colorTextCard">Almuerzo</li>
-                        <li class="list-group-item bg-dark colorTextCard">Cena</li>
-                    </ul>
-                    
-                    <div class= "btn btn-dark" >
-                        <button class="btn btn-primary" type="submit" id ="comidaSi">Deseo agregar paquete</button>
-                    </div>
-                    <div class= "btn btn-dark" >
-                        <button class="btn btn-primary" type="submit" id ="comidaNo">No, gracias</button>
-                    </div>
-                    <div class="d-flex justify-content-center">
-                        <span>Costo adicional $ ${cantP*600}</span>
-                    </div>
-                </div>
-        </div>
-
-        <div class="separador d-flex justify-content-center">
-                <div class="separador card margin bg-dark border border-white " style="width: 18rem;">
-                    
-                    <div class="card-body">
-                        <h5 class="card-title">Tours por Córdoba</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                    </div>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item bg-dark colorTextCard">Salida a Carlos Paz</li>
-                        <li class="list-group-item bg-dark colorTextCard">Trekking Cerro Uritorco</li>
-                        <li class="list-group-item bg-dark colorTextCard">Recorrido Mirador Icho Cruz</li>
-                    </ul>
-                    
-                    <div class= "btn btn-dark" >
-                        <button class="btn btn-primary" type="submit" id ="tourSi">Deseo agregar paquete</button>
-                    </div>
-                    <div class= "btn btn-dark" >
-                        <button class="btn btn-primary" type="submit" id ="tourNo">No, gracias</button>
-                    </div>
-                    <div class="d-flex justify-content-center">
-                        <span>Costo adicional $ ${cantP*700}</span>
-                    </div>
-                </div>
-        </div>
-
-        <div class="separador d-flex justify-content-center">
-                <div class="separador card margin bg-dark border border-white " style="width: 18rem;">
-                    
-                    <div class="card-body">
-                        <h5 class="card-title">Eventos de Hotel</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                    </div>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item bg-dark colorTextCard">Juegos para grandes y chicos</li>
-                        <li class="list-group-item bg-dark colorTextCard">Pase libre al salon de eventos</li>
-                        <li class="list-group-item bg-dark colorTextCard">Uso de parque interno del hotel</li>
-                    </ul>
-                    
-                    <div class= "btn btn-dark" >
-                        <button class="btn btn-primary" type="submit" id ="eventoSi">Deseo agregar paquete</button>
-                    </div>
-                    <div class= "btn btn-dark" >
-                        <button class="btn btn-primary" type="submit" id ="eventoNo">No, gracias</button>
-                    </div>
-                    <div class="d-flex justify-content-center">
-                        <span>Costo adicional $ ${cantP*800}</span>
-                    </div>
-                </div>
-        </div>
-
-
-        `*/
-
-
-/*fetch("https://api.openweathermap.org/data/3.0/onecall?lat=-64.1855922931011&lon=-31.41103239109793&exclude=current,minutely,hourly,alerts&appid=dc68c447dad3dc59fc52561a7bf67058&units=standard")
-        .then(response => response.json())
-        .then(response => console.log(response))
-        .then(({}))
-        .catch(err => console.error(err));*/
-
-/*setInterval(()=>{
-    fetch('https://weatherbit-v1-mashape.p.rapidapi.com/current?lon=-64.18524897037507&lat=-31.41114226939232&lang=es', options)
-        .then(response => response.json())
-        .then(response => console.log(response))
-        .then(({}))
-        .catch(err => console.error(err));
-}, )
-
-https://api.openweathermap.org/data/3.0/onecall?lat=-64.1855922931011&lon=-31.41103239109793&exclude=current,minutely,hourly,alerts&appid=dc68c447dad3dc59fc52561a7bf67058&units=standard*/
-
-/*document.getElementById(`botonHab`).addEventListener("click", ()=>{
-    let habParse = JSON.parse(localStorage.getItem("habitacionElegida")) 
-    console.log(habParse)
-})*/
-
-
-// Funcion para mostrarle el detallado de cada habitacion al usuario
-/*function opcionHab(cantFam){
-    
-    if (cantFam == 1){
-        alert("--Opcion 1--" + "\n" + hab1Op1.join("\n") + "\n" + "--Opcion 2--" + "\n" + hab1Op2.join("\n"))
-        op = parseInt(prompt("Igrese habitacion que desee"))        
-    }
-    
-    if (cantFam == 2){
-        alert("--Opcion 1--" + "\n" + hab2Op1.join("\n") +  "\n" + "--Opcion 2--" + "\n" + hab2Op2.join("\n"))
-        op = parseInt(prompt("Igrese habitacion que desee"))
-        
-    }
-
-    if (cantFam == 3){
-        alert("--Opcion 1--" + "\n" + hab3Op1.join("\n") +  "\n" + "--Opcion 2--" + "\n" + hab3Op2.join("\n"))
-        op = parseInt(prompt("Igrese habitacion que desee"))
-        
-    }
-
-    if (cantFam == 4){
-        alert("--Opcion 1--" + "\n" + hab4Op1.join("\n") +  "\n" + "--Opcion 2--" + "\n" + hab4Op2.join("\n"))
-        op = parseInt(prompt("Igrese habitacion que desee"))
-        
-    }
-    
-    // Hago entrar en boucle al usuario en caso de que coloque una opcion incorrecta
-    while (op > 2 || op < 1){
-        op = parseInt(prompt("Dato inválido igrese su opción nuevamente"))
-    }
-
-    return op
-}*/
-
-
-
-// Funcion para ofrecerle al usuario algun tipo de servicio del hotel si desea all inclusive no se le pregunta las otras opciones por redundancia
-/*function servicioHotel(cantFam){
-    servicio = 0
-
-    allInclusive = prompt("¿Desea all inclusive?").toLowerCase()
-
-    if (allInclusive == "si"){
-        servicio = 1000 * cantFam
-    }
-
-    else if (allInclusive == "no"){
-        
-        comida = prompt("¿Desea incluir desayuno, almuerzo y cena?").toLowerCase()
-
-        if (comida == "si"){
-            servicio = 800 * cantFam
-        }
-        
-        tour = prompt("¿Desea incluír tours?").toLowerCase()
-        if (tour == "si"){
-            servicio += 700 * cantFam
-        }
-
-        
-        paseLibre = prompt("¿Desea pase libre eventos del hotel?").toLowerCase()
-        if (paseLibre == "si"){
-            servicio += 600 * cantFam
-        }
-    }
-    return servicio
-}
-
-// Funcion flecha para ahorrar linea
-const precioHab = (cost, dia, per) => (precioHabi = cost * dia * per)
-
-// Guardo la opcion del usuario despues de mostrarle el detalle de cada habitacion dependiendo de la cantidad de personas
-let opcion = opcionHab(cantPer)
-
-// Uso una Funcion superior para ahorrarme declarar las 2 variables anteriores
-const precioFinal = (cantFam, cost, dia) => servicioHotel(cantFam) + precioHab(cost, dia, cantFam) 
-
-
-let servi = servicioHotel(cantPer)
-let precioHabitacion = precioHab(costoPorDia, diasEstadia, cantPer)
-
-// Uso un objeto a modo de ticket para mostrarlo por consola
-class Ticket{
-    constructor(cliente, dias, cantFam, op){
-        this.cliente = cliente
-        this.dias = dias
-        this.cantFam = cantFam
-        this.op = op
-    }
-    // Dependiendo de la habitacion que elija muestro el detalle separado por coma usando el join
-    opHab(op, cantFam){
-        if (op == 1 && cantFam == 1){
-            console.log(hab1Op1.join(", "))
-        }
-        
-        else if (op == 2 && cantFam == 1){
-            console.log(hab1Op2.join(", "))
-        }
-        
-        if (op == 1 && cantFam == 2){
-            console.log(hab2Op1.join(", "))
-        }
-        
-        else if (op == 2 && cantFam == 2){
-            console.log(hab2Op2.join(", "))
-        }
-        
-        if (op == 1 && cantFam == 3){
-            console.log(hab3Op1.join(", "))
-        }
-        
-        else if (op == 2 && cantFam == 3){
-            console.log(hab3Op2.join(", "))
-        }
-        
-        if (op == 1 && cantFam == 4){
-            console.log(hab4Op1.join(", "))
-        }
-        
-        else if (op == 2 && cantFam == 4){
-            console.log(hab4Op2.join(", "))
-        }
-    }
-}
-
-// Declaracion del objeto
-const ticketCliente = new Ticket(usuario, diasEstadia, cantPer, opcion)
-
-
-// Salida por consola con todos los datos que ingreso el usuario
-console.log("Señor/a " + ticketCliente.cliente)
-console.log("Usted ha elegido la siguiente habitación")
-
-// No le hago un console.log al metodo porque ya tiene incorporado en el mismo
-ticketCliente.opHab(opcion, cantPer)
-
-// Salida por consola el detallado de lo que eligio el usuario
-console.log("Costo final por su estadía de " + ticketCliente.dias + " días" + " para " + ticketCliente.cantFam + " persona/s" + " es de " + "$" + precioFinal(cantPer, costoPorDia, diasEstadia))
-console.log("Gracias por elegirnos.")*/
